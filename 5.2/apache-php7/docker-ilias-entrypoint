@@ -1,0 +1,18 @@
+#!/bin/sh
+set -e
+
+ILIAS_CLIENT_MASTER_INI="setup/client.master.ini.php"
+
+replace_ini() {
+    local file="$1"
+    local key="$2"
+    local value="$3"
+    sed -i "s|\s*$key\s*=.*|$key = $value|" $file
+}
+
+replace_ini ${ILIAS_CLIENT_MASTER_INI} "host" "${ILIAS_DB_HOST}"
+replace_ini ${ILIAS_CLIENT_MASTER_INI} "user" "${ILIAS_DB_USER}"
+replace_ini ${ILIAS_CLIENT_MASTER_INI} "pass" "${ILIAS_DB_PASSWORD}"
+replace_ini ${ILIAS_CLIENT_MASTER_INI} "name" "${ILIAS_DB_NAME}"
+
+exec "$@"
