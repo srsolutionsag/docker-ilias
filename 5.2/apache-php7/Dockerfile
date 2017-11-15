@@ -1,4 +1,4 @@
-FROM registry.studer-raimann.ch/ilias-elearning/ilias/base:apache-php7
+FROM registry.studer-raimann.ch/ilias/core/base:apache-php7
 
 ENV ILIAS_VERSION=5.2.8
 ENV ILIAS_SHA1=4975e39275908202a0f3d54fe9e1febdf427cc75
