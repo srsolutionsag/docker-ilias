@@ -10,9 +10,9 @@ replace_ini() {
     sed -i "s|\s*$key\s*=.*|$key = $value|" $file
 }
 
-replace_ini ${ILIAS_CLIENT_MASTER_INI} "host" "${ILIAS_DB_HOST}"
-replace_ini ${ILIAS_CLIENT_MASTER_INI} "user" "${ILIAS_DB_USER}"
+replace_ini ${ILIAS_CLIENT_MASTER_INI} "host" "${ILIAS_DB_HOST:=mysql}"
+replace_ini ${ILIAS_CLIENT_MASTER_INI} "user" "${ILIAS_DB_USER:=root}"
 replace_ini ${ILIAS_CLIENT_MASTER_INI} "pass" "${ILIAS_DB_PASSWORD}"
-replace_ini ${ILIAS_CLIENT_MASTER_INI} "name" "${ILIAS_DB_NAME}"
+replace_ini ${ILIAS_CLIENT_MASTER_INI} "name" "${ILIAS_DB_NAME:=ilias}"
 
 exec "$@"
