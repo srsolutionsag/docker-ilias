@@ -1,16 +1,4 @@
-FROM php:7.0-apache
-
-ARG ILIAS_VERSION
-ENV ILIAS_VERSION=${ILIAS_VERSION}
-
-ARG ILIAS_WWW_PATH=/var/www/html
-ENV ILIAS_WWW_PATH=${ILIAS_WWW_PATH}
-
-ARG ILIAS_DATA_PATH=/var/www/html/data
-ENV ILIAS_DATA_PATH=${ILIAS_DATA_PATH}
-
-ARG ILIAS_ILIASDATA_PATH=/var/iliasdata/ilias
-ENV ILIAS_ILIASDATA_PATH=${ILIAS_ILIASDATA_PATH}
+FROM php:5.6-apache
 
 RUN apt-get update && apt-get install -y \
     curl \
@@ -33,6 +21,10 @@ RUN a2enmod \
     headers \
     rewrite
 
+ENV ILIAS_WWW_PATH=/var/www/html
+ENV ILIAS_DATA_PATH=/var/www/html/data
+ENV ILIAS_ILIASDATA_PATH=/var/iliasdata/ilias
+
 RUN mkdir -p ${ILIAS_ILIASDATA_PATH} \
     && chown www-data:www-data ${ILIAS_ILIASDATA_PATH}
 VOLUME ${ILIAS_ILIASDATA_PATH}
@@ -45,6 +37,8 @@ COPY docker-ilias-entrypoint /usr/local/bin/
 
 ENTRYPOINT ["docker-ilias-entrypoint"]
 CMD ["apache2-foreground"]
+
+ENV ILIAS_VERSION=5.1.22
 
 ADD https://github.com/ILIAS-eLearning/ILIAS/archive/v${ILIAS_VERSION}.tar.gz \
     ilias.tar.gz
