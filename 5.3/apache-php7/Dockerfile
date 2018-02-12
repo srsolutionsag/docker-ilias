@@ -38,7 +38,7 @@ COPY docker-ilias-entrypoint /usr/local/bin/
 ENTRYPOINT ["docker-ilias-entrypoint"]
 CMD ["apache2-foreground"]
 
-ENV ILIAS_VERSION=5.3.0
+ENV ILIAS_VERSION=5.3.1
 
 ADD https://github.com/ILIAS-eLearning/ILIAS/archive/v${ILIAS_VERSION}.tar.gz \
     ilias.tar.gz
