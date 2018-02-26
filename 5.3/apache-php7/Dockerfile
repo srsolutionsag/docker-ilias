@@ -39,9 +39,9 @@ ENTRYPOINT ["docker-ilias-entrypoint"]
 CMD ["apache2-foreground"]
 
 ENV ILIAS_VERSION=5.3.1
+ENV ILIAS_SHA1=98d6912af1b3ba121ae12f38680521f774d67469
 
-ADD https://github.com/ILIAS-eLearning/ILIAS/archive/v${ILIAS_VERSION}.tar.gz \
-    ilias.tar.gz
-
-RUN tar -xzf ilias.tar.gz --strip-components=1 \
+RUN curl -o ilias.tar.gz -SL https://github.com/ILIAS-eLearning/ILIAS/archive/v${ILIAS_VERSION}.tar.gz \
+    && echo "$ILIAS_SHA1 *ilias.tar.gz" | sha1sum -c - \
+    && tar -xzf ilias.tar.gz --strip-components=1 \
     && rm ilias.tar.gz
