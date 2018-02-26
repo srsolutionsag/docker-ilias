@@ -38,6 +38,8 @@ COPY docker-ilias-entrypoint /usr/local/bin/
 ENTRYPOINT ["docker-ilias-entrypoint"]
 CMD ["apache2-foreground"]
 
+RUN echo "error_reporting = E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED & ~E_STRICT" > /usr/local/etc/php/conf.d/ilias.ini
+
 ENV ILIAS_VERSION=5.1.24
 ENV ILIAS_SHA1=cb9778b0e50f4a31f6afb9eba97b21b50401101c
 
