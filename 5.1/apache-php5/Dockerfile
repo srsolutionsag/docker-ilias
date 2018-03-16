@@ -40,8 +40,8 @@ CMD ["apache2-foreground"]
 
 RUN echo "error_reporting = E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED & ~E_STRICT" > /usr/local/etc/php/conf.d/ilias.ini
 
-ENV ILIAS_VERSION=5.1.24
-ENV ILIAS_SHA1=cb9778b0e50f4a31f6afb9eba97b21b50401101c
+ENV ILIAS_VERSION=5.1.25
+ENV ILIAS_SHA1=f910c2fbee8dbd6d7694286e32aed53740df8cd3
 
 RUN curl -o ilias.tar.gz -SL https://github.com/ILIAS-eLearning/ILIAS/archive/v${ILIAS_VERSION}.tar.gz \
     && echo "$ILIAS_SHA1 *ilias.tar.gz" | sha1sum -c - \
