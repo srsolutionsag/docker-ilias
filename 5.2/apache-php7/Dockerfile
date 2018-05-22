@@ -45,8 +45,8 @@ RUN echo "upload_max_filesize = ${ILIAS_MAX_UPLOAD_SIZE}\n\
 post_max_size = ${ILIAS_MAX_UPLOAD_SIZE}" \
 > /usr/local/etc/php/conf.d/ilias.ini
 
-ENV ILIAS_VERSION=5.2.15
-ENV ILIAS_SHA1=c10171eb4e0d3d1c72e350d26f2bd8d0f8db7d85
+ENV ILIAS_VERSION=5.2.16
+ENV ILIAS_SHA1=d1097430d3f6376e0e03d33e3ba9c70219c8167c
 
 RUN curl -o ilias.tar.gz -SL https://github.com/ILIAS-eLearning/ILIAS/archive/v${ILIAS_VERSION}.tar.gz \
     && echo "$ILIAS_SHA1 *ilias.tar.gz" | sha1sum -c - \
