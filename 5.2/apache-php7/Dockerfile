@@ -15,8 +15,8 @@ RUN docker-php-ext-install \
     pdo \
     pdo_mysql \
     soap \
-    zip \
-    xsl
+    xsl \
+    zip
 
 RUN a2enmod \
     expires \
