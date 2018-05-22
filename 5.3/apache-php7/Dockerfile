@@ -14,6 +14,7 @@ RUN docker-php-ext-install \
     mysqli \
     pdo \
     pdo_mysql \
+    zip \
     xsl
 
 RUN a2enmod \
