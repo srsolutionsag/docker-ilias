@@ -28,11 +28,13 @@ ENV ILIAS_DATA_PATH=/var/www/html/data
 ENV ILIAS_ILIASDATA_PATH=/var/iliasdata/ilias
 
 RUN mkdir -p ${ILIAS_ILIASDATA_PATH} \
-    && chown www-data:www-data ${ILIAS_ILIASDATA_PATH}
+    && chown www-data:root ${ILIAS_ILIASDATA_PATH} \
+    && chmod 775 ${ILIAS_ILIASDATA_PATH}
 VOLUME ${ILIAS_ILIASDATA_PATH}
 
 RUN mkdir ${ILIAS_DATA_PATH} \
-    && chown www-data:www-data ${ILIAS_DATA_PATH}
+    && chown www-data:root ${ILIAS_DATA_PATH} \
+    && chmod 775 ${ILIAS_DATA_PATH}
 VOLUME ${ILIAS_DATA_PATH}
 
 COPY docker-ilias-entrypoint /usr/local/bin/
