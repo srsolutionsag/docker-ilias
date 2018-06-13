@@ -1,0 +1,404 @@
+#!/usr/bin/env php
+<?php namespace SRAG\ILIAS\Setup;
+abstract class BasicInstaller implements Installer
+{
+
+	/**
+	 * @var string
+	 */
+	protected $client_name = 'default';
+
+
+	public function setErrorReporting()
+	{
+		error_reporting(
+			((ini_get("error_reporting") & ~E_NOTICE) & ~E_DEPRECATED)
+			& ~E_STRICT
+		);
+		// error_reporting(E_ALL);
+	}
+
+
+	public function readParameters()
+	{
+		$this->client_name = $_SERVER['argv'][1];
+	}
+
+
+	/**
+	 * @inheritdoc
+	 */
+	public function getClientName()
+	{
+		return $this->client_name;
+	}
+
+
+	public function basicRequires()
+	{
+		require_once("./Services/Utilities/classes/class.ilUtil.php");
+		require_once("./setup/classes/class.ilClient.php");
+		require_once("./setup/classes/class.ilDBConnections.php");
+		require_once("./Services/Init/classes/class.ilIniFile.php");
+		require_once("./Services/Database/classes/class.ilDBUpdate.php");
+		require_once("./Services/AccessControl/classes/class.ilRbacAdmin.php");
+		require_once("./Services/AccessControl/classes/class.ilRbacReview.php");
+		require_once("./Services/AccessControl/classes/class.ilRbacSystem.php");
+		require_once("./Services/Tree/classes/class.ilTree.php");
+		require_once("./Services/Xml/classes/class.ilSaxParser.php");
+		require_once("./Services/Object/classes/class.ilObjectDefinition.php");
+		require_once("./setup/classes/class.ilCtrlStructureReader.php");
+		require_once('./setup/classes/class.ilLanguage.php');
+		require_once("./Services/Init/classes/class.ilIniFile.php");
+		require_once("./Services/Utilities/classes/class.ilBenchmark.php");
+		require_once("./Services/GlobalCache/classes/class.ilGlobalCache.php");
+	}
+
+
+	public function readIniFilesAndProvideClient()
+	{
+		global $ilIliasIniFile;
+		$ilIliasIniFile = new \ilIniFile("./ilias.ini.php");
+		$ilIliasIniFile->read();
+
+		// Init CLient-ini
+		$ini_file = "./" . ILIAS_WEB_DIR . "/" . $this->getClientName()
+			. "/client.ini.php";
+
+		global $ilClientIniFile;
+		$ilClientIniFile = new \ilIniFile($ini_file);
+		$ilClientIniFile->read();
+
+		// Read Client
+		global $ilClient;
+		$ilClient = new \ilClient(
+			$this->getClientName(), new \ilDBConnections()
+		);
+		$ilClient->init();
+	}
+
+
+	public function prepareDBUpdate()
+	{
+		global $ilClient, $ilCtrlStructureReader;
+		$ilCtrlStructureReader = new \ilCtrlStructureReader();
+		$ilCtrlStructureReader->setIniFile($ilClient->ini);
+	}
+
+
+	public function updateDatabase()
+	{
+		global $ilDB;
+		$dbupdate = new \ilDBUpdate($ilDB);
+		$dbupdate->applyUpdate(9999);
+		$dbupdate->applyUpdate(9999); //  Due to possible errors in TestModule
+
+		$dbupdate->applyHotfix();
+		$dbupdate->applyCustomUpdates();
+	}
+
+
+	public function installLanguages()
+	{
+		global $lng, $ilDB;
+		$lng->setDbHandler($ilDB);
+		$lng->installLanguages(array('en'), array());
+	}
+
+
+	public function provideMinimalGlobals()
+	{
+
+	}
+
+
+	public function provideGlobals()
+	{
+		global $lng, $ilBench;
+		$ilBench = new \ilBenchmark();
+		$lng = new \ilLanguage('en');
+	}
+
+
+	public function setConfiguration()
+	{
+		global $ilClient;
+		// Proxy Settings
+		$ilClient->setSetting('proxy_status', '');
+		$ilClient->setSetting('proxy_host', '');
+		$ilClient->setSetting('proxy_port', '');
+
+		// Password Setting
+		$ilClient->ini->setVariable('auth', 'password_encoder', 'md5');
+
+		// NIC
+		$ilClient->setSetting("inst_id", "0");
+		$ilClient->setSetting("nic_enabled", "0");
+
+		// Contact
+		$ilClient->setSetting("admin_firstname", 'Admin');
+		$ilClient->setSetting("admin_lastname", 'ILIAS');
+		$ilClient->setSetting("admin_email", 'info@example.com');
+		$ilClient->ini->write();
+	}
+
+
+	public function finish()
+	{
+		global $ilClient;
+		// Finish Setup
+		$ilClient->setSetting('setup_ok', 1);
+	}
+}
+
+class Installer50 extends BasicInstaller implements Installer
+{
+
+
+
+	public function versionSpecificRequires()
+	{
+		require_once('./include/inc.get_pear.php');
+		require_once('./Services/Logging/classes/class.ilLog.php');
+	}
+
+
+	public function provideGlobalLogger()
+	{
+		global $ilLog, $log;
+		$ilLog = new \ilLog(ILIAS_DATA_DIR, 'ilias.log');
+		$log = $ilLog;
+	}
+}
+
+class Installer51 extends BasicInstaller implements Installer
+{
+
+	public function versionSpecificRequires()
+	{
+		require_once('./include/inc.get_pear.php');
+		include_once './Services/Logging/classes/class.ilLoggingSetupSettings.php';
+		include_once './Services/Logging/classes/public/class.ilLoggerFactory.php';
+		include_once("./Services/Init/classes/class.ilErrorHandling.php");
+	}
+
+
+	public function provideGlobalLogger()
+	{
+		global $ilLog, $log;
+		$logging_settings = new \ilLoggingSetupSettings();
+		$logging_settings->init();
+		$ilLog = \ilLoggerFactory::newInstance($logging_settings)
+			->getComponentLogger('setup');
+		$log = $ilLog;
+	}
+}
+
+class Installer52 extends BasicInstaller implements Installer
+{
+
+	public function versionSpecificRequires()
+	{
+		require_once('./libs/composer/vendor/autoload.php');
+		require_once('./libs/composer/vendor/filp/whoops/src/Whoops/Handler/Handler.php');
+		include_once './Services/Logging/classes/class.ilLoggingSetupSettings.php';
+		include_once './Services/Logging/classes/public/class.ilLoggerFactory.php';
+	}
+
+
+	public function provideMinimalGlobals()
+	{
+		parent::provideMinimalGlobals();
+		global $DIC, $ilDB, $lng;
+		$DIC = new \ILIAS\DI\Container();
+
+		$DIC['ilDB'] = $ilDB;
+	}
+
+
+	public function provideGlobals()
+	{
+		global $lng, $ilBench, $DIC;
+		$ilBench = new \ilBenchmark();
+		$DIC['ilBench'] = $ilBench;
+		$lng = new \ilLanguage('en');
+		$DIC['lng'] = $lng;
+	}
+
+
+	public function provideGlobalLogger()
+	{
+		global $ilLog, $DIC, $log;
+		$logging_settings = new \ilLoggingSetupSettings();
+		$logging_settings->init();
+		$ilLog = \ilLoggerFactory::newInstance($logging_settings)
+			->getComponentLogger('setup');
+
+		$DIC['ilLog'] = $ilLog;
+		$log = $ilLog;
+	}
+}
+
+/**
+ * Finish the ILIAS-Setup
+ *
+ * @author Fabian Schmid <fs@studer-raimann.ch>
+ */
+class InstallerPreparation
+{
+
+	public function setPathConstants()
+	{
+		define('ILIAS_ABSOLUTE_PATH', getenv('ILIAS_WWW_PATH') ?: '/var/www/ilias');
+		define('ILIAS_WEB_DIR', 'data');
+		define('ILIAS_DATA_DIR', getenv('ILIAS_ILIASDATA_PATH') ?: '/var/iliasdata/ilias');
+	}
+
+
+	public function changeDirectory()
+	{
+		chdir(ILIAS_ABSOLUTE_PATH);
+	}
+
+
+	public function readVersionFile()
+	{
+		require_once('./include/inc.ilias_version.php');
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getILIASVersion()
+	{
+		return ILIAS_VERSION_NUMERIC;
+	}
+
+
+	public function startSession()
+	{
+		session_start();
+	}
+}
+
+class InstallerRunner
+{
+
+	/**
+	 * @var Installer
+	 */
+	protected $installer;
+
+
+	public function run()
+	{
+		$preparation = new InstallerPreparation();
+
+		$preparation->setPathConstants();
+		$preparation->changeDirectory();
+		$preparation->readVersionFile();
+		$preparation->startSession();
+
+		$this->installer = (new InstallerFactory())->getInstallerForVersion(
+			$preparation
+		);
+
+		$this->installer->basicRequires();
+		$this->installer->versionSpecificRequires();
+		$this->installer->provideMinimalGlobals();
+		$this->installer->readIniFilesAndProvideClient();
+		$this->installer->provideGlobals();
+		$this->installer->provideGlobalLogger();
+		$this->installer->prepareDBUpdate();
+		$this->installer->updateDatabase();
+		$this->installer->installLanguages();
+		$this->installer->setConfiguration();
+		$this->installer->finish();
+	}
+}
+
+class InstallerFactory
+{
+
+	/**
+	 * @param InstallerPreparation $preparation
+	 *
+	 * @return Installer
+	 */
+	public function getInstallerForVersion(InstallerPreparation $preparation)
+	{
+		$ilias_version_string = $preparation->getILIASVersion();
+
+		$installer = null;
+		switch (true) {
+		case (version_compare($ilias_version_string, '5.4.0', '>=')):
+		case (version_compare($ilias_version_string, '5.3.0', '>=')):
+		case (version_compare($ilias_version_string, '5.2.0', '>=')):
+			$installer = new Installer52();
+			break;
+		case (version_compare($ilias_version_string, '5.1.0', '>=')):
+			$installer = new Installer51();
+			break;
+		case (version_compare($ilias_version_string, '5.0.0', '>=')):
+			$installer = new Installer50();
+			break;
+		}
+
+		return $installer;
+	}
+}
+
+interface Installer
+{
+
+	public function setErrorReporting();
+
+
+	public function readParameters();
+
+
+	public function basicRequires();
+
+
+	public function versionSpecificRequires();
+
+
+	public function readIniFilesAndProvideClient();
+
+
+	public function provideMinimalGlobals();
+
+
+	public function provideGlobals();
+
+
+	public function prepareDBUpdate();
+
+
+	public function updateDatabase();
+
+
+	public function installLanguages();
+
+
+	public function setConfiguration();
+
+
+	public function finish();
+
+
+	public function provideGlobalLogger();
+
+
+	/**
+	 * @return string
+	 */
+	public function getClientName();
+}
+
+//
+// RUN
+//
+$runner = new InstallerRunner();
+$runner->run();

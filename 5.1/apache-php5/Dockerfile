@@ -39,6 +39,7 @@ RUN mkdir ${ILIAS_DATA_PATH} \
 VOLUME ${ILIAS_DATA_PATH}
 
 COPY docker-ilias-entrypoint /usr/local/bin/
+COPY install-ilias /usr/local/bin/
 
 ENTRYPOINT ["docker-ilias-entrypoint"]
 CMD ["apache2-foreground"]

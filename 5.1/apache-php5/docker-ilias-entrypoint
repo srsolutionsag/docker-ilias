@@ -1,18 +1,191 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
-ILIAS_CLIENT_MASTER_INI="setup/client.master.ini.php"
-
-replace_ini() {
-    local file="$1"
-    local key="$2"
-    local value="$3"
-    sed -i "s|\s*$key\s*=.*|$key = $value|" $file
+function mkpass () {
+  pass="$1"
+  echo -n ${pass} | md5sum | awk '{print $1}'
 }
 
-replace_ini ${ILIAS_CLIENT_MASTER_INI} "host" "${ILIAS_DB_HOST:=mysql}"
-replace_ini ${ILIAS_CLIENT_MASTER_INI} "user" "${ILIAS_DB_USER:=root}"
-replace_ini ${ILIAS_CLIENT_MASTER_INI} "pass" "${ILIAS_DB_PASSWORD}"
-replace_ini ${ILIAS_CLIENT_MASTER_INI} "name" "${ILIAS_DB_NAME:=ilias}"
+# Set defaults
+ILIAS_CLIENT_NAME="${ILIAS_CLIENT_NAME:=default}"
+ILIAS_HOST_NAME="${ILIAS_HOST_NAME:=$(hostname)}"
+ILIAS_TIMEZONE="${ILIAS_TIMEZONE:=Europe/Berlin}"
+
+ILIAS_ROOT_PASSWORD="${ILIAS_ROOT_PASSWORD:=homer}"
+ILIAS_SETUP_PASSWORD="${ILIAS_SETUP_PASSWORD:=$ILIAS_ROOT_PASSWORD}"
+
+ILIAS_DB_TYPE="${ILIAS_DB_TYPE:=innodb}"
+ILIAS_DB_HOST="${ILIAS_DB_HOST:=mysql}"
+ILIAS_DB_USER="${ILIAS_DB_USER:=ilias}"
+ILIAS_DB_NAME="${ILIAS_DB_NAME:=ilias}"
+ILIAS_DB_PORT="${ILIAS_DB_PORT:=3306}"
+ILIAS_DB_DUMP="${ILIAS_DB_DUMP:=setup/sql/ilias3.sql}"
+
+ILIAS_DEFAULT_SKIN="${ILIAS_DEFAULT_SKIN:=default}"
+ILIAS_DEFAULT_STYLE="${ILIAS_DEFAULT_STYLE:=delos}"
+
+# Define Templates
+ILIAS_INI="
+; <?php exit; ?>
+[server]
+http_path = http://${ILIAS_HOST_NAME}
+absolute_path = ${ILIAS_WWW_PATH}
+presetting = 
+timezone = ${ILIAS_TIMEZONE}
+
+[clients]
+path = data
+inifile = client.ini.php
+datadir = ${ILIAS_ILIASDATA_PATH}
+default = ${ILIAS_CLIENT_NAME}
+list = 0
+
+[setup]
+pass = $(mkpass ${ILIAS_SETUP_PASSWORD})
+
+[tools]
+convert = /usr/bin/convert
+zip = /usr/bin/zip
+unzip = /usr/bin/unzip
+java = 
+htmldoc = 
+ffmpeg = 
+ghostscript = /usr/bin/gs
+latex = 
+vscantype = 
+scancommand = 
+cleancommand = 
+
+[log]
+path = ${ILIAS_ILIASDATA_PATH}
+file = ilias.log
+enabled = 1
+level = WARNING
+error_path = ${ILIAS_ILIASDATA_PATH}/errors
+
+[https]
+auto_https_detect_enabled = 1
+auto_https_detect_header_name = X_FORWARDED_PROTO
+auto_https_detect_header_value = https
+"
+ILIAS_CLIENT_INI="
+; <?php exit; ?>
+[server]
+start = ./login.php
+
+[client]
+name = ${ILIAS_CLIENT_NAME}
+description = 
+access = 1
+
+[db]
+type = ${ILIAS_DB_TYPE}
+host = ${ILIAS_DB_HOST}
+user = ${ILIAS_DB_USER}
+pass = ${ILIAS_DB_PASSWORD}
+name = ${ILIAS_DB_NAME}
+port = ${ILIAS_DB_PORT}
+
+[auth]
+table = usr_data
+usercol = login
+passcol = passwd
+
+[language]
+default = en
+path = ./lang
+
+[layout]
+skin = ${ILIAS_DEFAULT_SKIN}
+style = ${ILIAS_DEFAULT_STYLE}
+
+[session]
+expire = 1800
+
+[system]
+ROOT_FOLDER_ID = 1
+SYSTEM_FOLDER_ID = 9
+ROLE_FOLDER_ID = 8
+MAIL_SETTINGS_ID = 12
+MAXLENGTH_OBJ_TITLE = 65
+MAXLENGTH_OBJ_DESC = 123
+DEBUG = 0
+
+[cache]
+activate_global_cache = 0
+global_cache_service_type = 0
+"
+
+if [ ! -d "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}" ]; then
+    echo "Preparing installation"
+    # Create data directories
+    mkdir -p "${ILIAS_ILIASDATA_PATH}/${ILIAS_CLIENT_NAME}/files"
+    mkdir -p "${ILIAS_ILIASDATA_PATH}/${ILIAS_CLIENT_NAME}/forum"
+    mkdir -p "${ILIAS_ILIASDATA_PATH}/${ILIAS_CLIENT_NAME}/lm_data"
+    mkdir -p "${ILIAS_ILIASDATA_PATH}/${ILIAS_CLIENT_NAME}/mail"
+
+    mkdir -p "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/css"
+    mkdir -p "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/lm_data"
+    mkdir -p "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/mobs"
+    mkdir -p "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/usr_images"
+
+    # Add ini file
+    echo "${ILIAS_CLIENT_INI}" > "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/client.ini.php"
+
+    # Touch ilias log
+    touch ${ILIAS_ILIASDATA_PATH}/ilias.log
+
+    # Fix permissions
+    chown -R www-data:www-data ${ILIAS_ILIASDATA_PATH}
+    chown -R www-data:www-data ${ILIAS_DATA_PATH}
+
+    mysql="mysql
+        --host=${ILIAS_DB_HOST}
+        --user=${ILIAS_DB_USER}
+        --password=${ILIAS_DB_PASSWORD}
+        ${ILIAS_DB_NAME}"
+
+    # Wait for database
+    until ${mysql} -e "SELECT VERSION();" &> /dev/null; do
+        echo "Cannot connect to database, waiting"
+        sleep 1
+    done
+    echo "Database connection established"
+
+    # Import database
+    echo "Installing database"
+    ${mysql} < ${ILIAS_DB_DUMP}
+
+    # Run setup
+    echo "Running setup"
+    install-ilias ${ILIAS_CLIENT_NAME} > /dev/null
+
+    echo "Setting root password"
+    ${mysql} -e "UPDATE usr_data SET
+            passwd = '$(mkpass ${ILIAS_ROOT_PASSWORD})',
+            passwd_enc_type = 'md5'
+        WHERE usr_id = 6"
+
+    echo "Setting skin/style"
+    ${mysql} -e "UPDATE usr_pref SET
+            value = '${ILIAS_DEFAULT_SKIN}'
+        WHERE keyword = 'skin'"
+    ${mysql} -e "UPDATE usr_pref SET
+            value = '${ILIAS_DEFAULT_STYLE}'
+        WHERE keyword = 'style'"
+
+    echo "======================================================="
+    echo "ILIAS installed successfully!"
+    echo "Log in using the following credentials:"
+    echo
+    echo "User:           root"
+    echo "Password:       ${ILIAS_ROOT_PASSWORD}"
+    echo "Setup Password: ${ILIAS_SETUP_PASSWORD}"
+    echo "======================================================="
+else
+    echo "ILIAS already installed"
+fi
+
+echo "${ILIAS_INI}" > "${ILIAS_WWW_PATH}/ilias.ini.php"
 
 exec "$@"
