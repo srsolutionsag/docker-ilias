@@ -34,8 +34,7 @@ VOLUME ${ILIAS_ILIASDATA_PATH}
 
 RUN mkdir ${ILIAS_DATA_PATH} \
     && chown www-data:root ${ILIAS_DATA_PATH} \
-    && chmod 775 ${ILIAS_DATA_PATH} \
-    && ln -s data/ilias.ini.php .
+    && chmod 775 ${ILIAS_DATA_PATH}
 VOLUME ${ILIAS_DATA_PATH}
 
 COPY docker-ilias-entrypoint /usr/local/bin/
