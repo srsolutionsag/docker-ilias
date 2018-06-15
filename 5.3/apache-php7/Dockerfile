@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y \
     libav-tools \
     libpng12-dev \
     libxslt-dev \
+    mysql-client \
     unzip \
     zip
 
