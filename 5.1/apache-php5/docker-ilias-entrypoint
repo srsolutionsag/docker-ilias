@@ -136,8 +136,8 @@ if [ ! -d "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}" ]; then
     touch ${ILIAS_ILIASDATA_PATH}/ilias.log
 
     # Fix permissions
-    chown -R www-data:www-data ${ILIAS_ILIASDATA_PATH}
-    chown -R www-data:www-data ${ILIAS_DATA_PATH}
+    chown -R www-data:www-data ${ILIAS_ILIASDATA_PATH} || true
+    chown -R www-data:www-data ${ILIAS_DATA_PATH} || true
 
     mysql="mysql
         --host=${ILIAS_DB_HOST}
