@@ -117,7 +117,7 @@ global_cache_service_type = 0
 "
 
 if [ ! -d "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}" ]; then
-    echo "Preparing installation"
+    echo "Preparing data directories"
     # Create data directories
     mkdir -p "${ILIAS_ILIASDATA_PATH}/${ILIAS_CLIENT_NAME}/files"
     mkdir -p "${ILIAS_ILIASDATA_PATH}/${ILIAS_CLIENT_NAME}/forum"
@@ -129,36 +129,40 @@ if [ ! -d "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}" ]; then
     mkdir -p "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/mobs"
     mkdir -p "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/usr_images"
 
-    # Add ini file
-    echo "${ILIAS_CLIENT_INI}" > "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/client.ini.php"
-
-    # Touch ilias log
-    touch ${ILIAS_ILIASDATA_PATH}/ilias.log
-
     # Fix permissions
-    chown -R www-data:www-data ${ILIAS_ILIASDATA_PATH} || true
-    chown -R www-data:www-data ${ILIAS_DATA_PATH} || true
+    chown -R www-data:root ${ILIAS_ILIASDATA_PATH} || true
+    chown -R www-data:root ${ILIAS_DATA_PATH} || true
+fi
 
-    mysql="mysql
-        --host=${ILIAS_DB_HOST}
-        --user=${ILIAS_DB_USER}
-        --password=${ILIAS_DB_PASSWORD}
-        ${ILIAS_DB_NAME}"
+# Add ini file
+echo "${ILIAS_CLIENT_INI}" > "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/client.ini.php"
+chown www-data:root "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/client.ini.php"
 
-    # Wait for database
-    tries=0
-    until ${mysql} -e "SELECT VERSION();" &> /dev/null; do
-        tries=$((tries + 1))
-        if [ tries -gt 100 ]; then
-            # give up
-            echo "Could not connect to database, aborting"
-            exit 1
-        fi
-        echo "Cannot connect to database, waiting"
-        sleep 1
-    done
-    echo "Database connection established"
+# Touch ilias log
+touch ${ILIAS_ILIASDATA_PATH}/ilias.log
+chown www-data:root ${ILIAS_ILIASDATA_PATH}/ilias.log
 
+mysql="mysql
+    --host=${ILIAS_DB_HOST}
+    --user=${ILIAS_DB_USER}
+    --password=${ILIAS_DB_PASSWORD}
+    ${ILIAS_DB_NAME}"
+
+# Wait for database
+tries=0
+until ${mysql} -e "SELECT VERSION();" &> /dev/null; do
+    tries=$((tries + 1))
+    if [ $tries -gt 100 ]; then
+        # give up
+        echo "Could not connect to database, aborting"
+        exit 1
+    fi
+    echo "Cannot connect to database, waiting"
+    sleep 1
+done
+echo "Database connection established"
+
+if ! $(${mysql} -e "SELECT COUNT(*) FROM settings" &> /dev/null); then
     # Import database
     echo "Installing database"
     ${mysql} < ${ILIAS_DB_DUMP}
@@ -166,32 +170,32 @@ if [ ! -d "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}" ]; then
     # Run setup
     echo "Running setup"
     install-ilias ${ILIAS_CLIENT_NAME} > /dev/null
-
-    echo "Setting root password"
-    ${mysql} -e "UPDATE usr_data SET
-            passwd = '$(mkpass ${ILIAS_ROOT_PASSWORD})',
-            passwd_enc_type = 'md5'
-        WHERE usr_id = 6"
-
-    echo "Setting skin/style"
-    ${mysql} -e "UPDATE usr_pref SET
-            value = '${ILIAS_DEFAULT_SKIN}'
-        WHERE keyword = 'skin'"
-    ${mysql} -e "UPDATE usr_pref SET
-            value = '${ILIAS_DEFAULT_STYLE}'
-        WHERE keyword = 'style'"
-
-    echo "======================================================="
-    echo "ILIAS installed successfully!"
-    echo "Log in using the following credentials:"
-    echo
-    echo "User:           root"
-    echo "Password:       ${ILIAS_ROOT_PASSWORD}"
-    echo "Setup Password: ${ILIAS_SETUP_PASSWORD}"
-    echo "======================================================="
 else
     echo "ILIAS already installed"
 fi
+
+echo "Setting root password"
+${mysql} -e "UPDATE usr_data SET
+        passwd = '$(mkpass ${ILIAS_ROOT_PASSWORD})',
+        passwd_enc_type = 'md5'
+    WHERE usr_id = 6"
+
+echo "Setting skin/style"
+${mysql} -e "UPDATE usr_pref SET
+        value = '${ILIAS_DEFAULT_SKIN}'
+    WHERE keyword = 'skin'"
+${mysql} -e "UPDATE usr_pref SET
+        value = '${ILIAS_DEFAULT_STYLE}'
+    WHERE keyword = 'style'"
+
+echo "======================================================="
+echo "ILIAS installed successfully!"
+echo "Log in using the following credentials:"
+echo
+echo "User:           root"
+echo "Password:       ${ILIAS_ROOT_PASSWORD}"
+echo "Setup Password: ${ILIAS_SETUP_PASSWORD}"
+echo "======================================================="
 
 echo "${ILIAS_INI}" > "${ILIAS_WWW_PATH}/ilias.ini.php"
 
