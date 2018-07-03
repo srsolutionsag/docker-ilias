@@ -134,9 +134,11 @@ if [ ! -d "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}" ]; then
     chown -R www-data:root ${ILIAS_DATA_PATH} || true
 fi
 
-# Add ini file
+# Add ini files
 echo "${ILIAS_CLIENT_INI}" > "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/client.ini.php"
 chown www-data:root "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/client.ini.php"
+
+echo "${ILIAS_INI}" > "${ILIAS_WWW_PATH}/ilias.ini.php"
 
 # Touch ilias log
 touch ${ILIAS_ILIASDATA_PATH}/ilias.log
@@ -196,7 +198,5 @@ echo "User:           root"
 echo "Password:       ${ILIAS_ROOT_PASSWORD}"
 echo "Setup Password: ${ILIAS_SETUP_PASSWORD}"
 echo "======================================================="
-
-echo "${ILIAS_INI}" > "${ILIAS_WWW_PATH}/ilias.ini.php"
 
 exec "$@"
