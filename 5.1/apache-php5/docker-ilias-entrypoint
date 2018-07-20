@@ -10,6 +10,7 @@ function mkpass () {
 ILIAS_CLIENT_NAME="${ILIAS_CLIENT_NAME:=default}"
 ILIAS_HOST_NAME="${ILIAS_HOST_NAME:=$(hostname)}"
 ILIAS_TIMEZONE="${ILIAS_TIMEZONE:=Europe/Berlin}"
+ILIAS_MAX_UPLOAD_SIZE="${ILIAS_MAX_UPLOAD_SIZE:=200M}"
 
 ILIAS_ROOT_PASSWORD="${ILIAS_ROOT_PASSWORD:=homer}"
 ILIAS_SETUP_PASSWORD="${ILIAS_SETUP_PASSWORD:=$ILIAS_ROOT_PASSWORD}"
@@ -115,6 +116,10 @@ DEBUG = 0
 activate_global_cache = 0
 global_cache_service_type = 0
 "
+PHP_INI="
+upload_max_filesize = ${ILIAS_MAX_UPLOAD_SIZE}
+post_max_size = ${ILIAS_MAX_UPLOAD_SIZE}
+"
 
 if [ ! -d "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}" ]; then
     echo "Preparing data directories"
@@ -139,6 +144,7 @@ echo "${ILIAS_CLIENT_INI}" > "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/client.ini
 chown www-data:root "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/client.ini.php"
 
 echo "${ILIAS_INI}" > "${ILIAS_WWW_PATH}/ilias.ini.php"
+echo "${PHP_INI}" > /usr/local/etc/php/conf.d/ilias.ini
 
 # Touch ilias log
 touch ${ILIAS_ILIASDATA_PATH}/ilias.log

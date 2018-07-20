@@ -44,12 +44,6 @@ COPY install-ilias /usr/local/bin/
 ENTRYPOINT ["docker-ilias-entrypoint"]
 CMD ["apache2-foreground"]
 
-ARG ILIAS_MAX_UPLOAD_SIZE=200M
-
-RUN echo "upload_max_filesize = ${ILIAS_MAX_UPLOAD_SIZE}\n\
-post_max_size = ${ILIAS_MAX_UPLOAD_SIZE}" \
-> /usr/local/etc/php/conf.d/ilias.ini
-
 ENV ILIAS_VERSION=5.3.6
 ENV ILIAS_SHA1=0aa554d32d3a5ea9fafd378637b76f2c864e23c2
 
