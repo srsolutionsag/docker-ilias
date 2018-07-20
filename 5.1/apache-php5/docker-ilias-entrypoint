@@ -144,59 +144,61 @@ echo "${ILIAS_INI}" > "${ILIAS_WWW_PATH}/ilias.ini.php"
 touch ${ILIAS_ILIASDATA_PATH}/ilias.log
 chown www-data:root ${ILIAS_ILIASDATA_PATH}/ilias.log
 
-mysql="mysql
-    --host=${ILIAS_DB_HOST}
-    --user=${ILIAS_DB_USER}
-    --password=${ILIAS_DB_PASSWORD}
-    ${ILIAS_DB_NAME}"
+if [[ "$1" == "apache2*" ]] || [ "$1" == "php-fpm" ]; then
+    mysql="mysql
+        --host=${ILIAS_DB_HOST}
+        --user=${ILIAS_DB_USER}
+        --password=${ILIAS_DB_PASSWORD}
+        ${ILIAS_DB_NAME}"
 
-# Wait for database
-tries=0
-until ${mysql} -e "SELECT VERSION();" &> /dev/null; do
-    tries=$((tries + 1))
-    if [ $tries -gt 100 ]; then
-        # give up
-        echo "Could not connect to database, aborting"
-        exit 1
+    # Wait for database
+    tries=0
+    until ${mysql} -e "SELECT VERSION();" &> /dev/null; do
+        tries=$((tries + 1))
+        if [ $tries -gt 100 ]; then
+            # give up
+            echo "Could not connect to database, aborting"
+            exit 1
+        fi
+        echo "Cannot connect to database, waiting"
+        sleep 1
+    done
+    echo "Database connection established"
+
+    if ! $(${mysql} -e "SELECT COUNT(*) FROM settings" &> /dev/null); then
+        # Import database
+        echo "Installing database"
+        ${mysql} < ${ILIAS_DB_DUMP}
+
+        # Run setup
+        echo "Running setup"
+        install-ilias ${ILIAS_CLIENT_NAME} > /dev/null
+    else
+        echo "ILIAS already installed"
     fi
-    echo "Cannot connect to database, waiting"
-    sleep 1
-done
-echo "Database connection established"
 
-if ! $(${mysql} -e "SELECT COUNT(*) FROM settings" &> /dev/null); then
-    # Import database
-    echo "Installing database"
-    ${mysql} < ${ILIAS_DB_DUMP}
+    echo "Setting root password"
+    ${mysql} -e "UPDATE usr_data SET
+            passwd = '$(mkpass ${ILIAS_ROOT_PASSWORD})',
+            passwd_enc_type = 'md5'
+        WHERE usr_id = 6"
 
-    # Run setup
-    echo "Running setup"
-    install-ilias ${ILIAS_CLIENT_NAME} > /dev/null
-else
-    echo "ILIAS already installed"
+    echo "Setting skin/style"
+    ${mysql} -e "UPDATE usr_pref SET
+            value = '${ILIAS_DEFAULT_SKIN}'
+        WHERE keyword = 'skin'"
+    ${mysql} -e "UPDATE usr_pref SET
+            value = '${ILIAS_DEFAULT_STYLE}'
+        WHERE keyword = 'style'"
+
+    echo "======================================================="
+    echo "ILIAS installed successfully!"
+    echo "Log in using the following credentials:"
+    echo
+    echo "User:           root"
+    echo "Password:       ${ILIAS_ROOT_PASSWORD}"
+    echo "Setup Password: ${ILIAS_SETUP_PASSWORD}"
+    echo "======================================================="
 fi
-
-echo "Setting root password"
-${mysql} -e "UPDATE usr_data SET
-        passwd = '$(mkpass ${ILIAS_ROOT_PASSWORD})',
-        passwd_enc_type = 'md5'
-    WHERE usr_id = 6"
-
-echo "Setting skin/style"
-${mysql} -e "UPDATE usr_pref SET
-        value = '${ILIAS_DEFAULT_SKIN}'
-    WHERE keyword = 'skin'"
-${mysql} -e "UPDATE usr_pref SET
-        value = '${ILIAS_DEFAULT_STYLE}'
-    WHERE keyword = 'style'"
-
-echo "======================================================="
-echo "ILIAS installed successfully!"
-echo "Log in using the following credentials:"
-echo
-echo "User:           root"
-echo "Password:       ${ILIAS_ROOT_PASSWORD}"
-echo "Setup Password: ${ILIAS_SETUP_PASSWORD}"
-echo "======================================================="
 
 exec "$@"
