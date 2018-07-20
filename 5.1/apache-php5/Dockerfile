@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -y \
     libxslt-dev \
     mysql-client \
     unzip \
-    zip
+    zip \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-install \
     gd \
