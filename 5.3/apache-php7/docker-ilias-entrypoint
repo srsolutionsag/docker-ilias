@@ -58,8 +58,9 @@ scancommand =
 cleancommand = 
 
 [log]
-path = ${ILIAS_ILIASDATA_PATH}
-file = ilias.log
+; log to php://stdout (missing slash is added during concat by ilias itself)
+path = php:/
+file = stdout
 enabled = 1
 level = WARNING
 error_path = ${ILIAS_ILIASDATA_PATH}/errors
