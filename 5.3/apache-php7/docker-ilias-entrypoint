@@ -160,15 +160,16 @@ if [[ "$1" == apache2* ]] || [ "$1" == php-fpm ]; then
 
     # Wait for database
     tries=0
+    maxTries=10
     until ${mysql} -e "SELECT VERSION();" &> /dev/null; do
         tries=$((tries + 1))
-        if [ $tries -gt 100 ]; then
+        if [ $tries -gt $maxTries ]; then
             # give up
             echo "Could not connect to database, aborting"
             exit 1
         fi
         echo "Cannot connect to database, waiting"
-        sleep 1
+        sleep 3
     done
     echo "Database connection established"
 
