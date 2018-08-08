@@ -45,8 +45,8 @@ COPY install-ilias /usr/local/bin/
 ENTRYPOINT ["docker-ilias-entrypoint"]
 CMD ["apache2-foreground"]
 
-ENV ILIAS_VERSION=5.2.17
-ENV ILIAS_SHA1=1ae7acb14de5b7316a11aa410138f9d1f958aa77
+ENV ILIAS_VERSION=5.2.18
+ENV ILIAS_SHA1=cbd30388cd1d60b5dcae1d9d0de10ccd0e4b24ba
 
 RUN curl -o ilias.tar.gz -SL https://github.com/ILIAS-eLearning/ILIAS/archive/v${ILIAS_VERSION}.tar.gz \
     && echo "$ILIAS_SHA1 *ilias.tar.gz" | sha1sum -c - \
