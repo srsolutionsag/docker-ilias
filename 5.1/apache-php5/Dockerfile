@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpng12-dev \
     libxslt-dev \
     mysql-client \
+    pwgen \
     unzip \
     zip \
     && rm -rf /var/lib/apt/lists/*
