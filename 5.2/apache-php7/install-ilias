@@ -307,6 +307,7 @@ class InstallerRunner
 		$this->installer->basicRequires();
 		$this->installer->versionSpecificRequires();
 		$this->installer->provideMinimalGlobals();
+		$this->installer->readParameters();
 		$this->installer->readIniFilesAndProvideClient();
 		$this->installer->provideGlobals();
 		$this->installer->provideGlobalLogger();
