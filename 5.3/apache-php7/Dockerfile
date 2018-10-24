@@ -40,12 +40,6 @@ RUN mkdir ${ILIAS_DATA_PATH} \
     && chmod 775 ${ILIAS_DATA_PATH}
 VOLUME ${ILIAS_DATA_PATH}
 
-COPY docker-ilias-entrypoint /usr/local/bin/
-COPY install-ilias /usr/local/bin/
-
-ENTRYPOINT ["docker-ilias-entrypoint"]
-CMD ["apache2-foreground"]
-
 ENV ILIAS_VERSION=5.3.10
 ENV ILIAS_SHA1=ac8967300c34bbb6e51c6f069dc5c82f13efe2ba
 
@@ -53,3 +47,9 @@ RUN curl -o ilias.tar.gz -SL https://github.com/ILIAS-eLearning/ILIAS/archive/v$
     && echo "$ILIAS_SHA1 *ilias.tar.gz" | sha1sum -c - \
     && tar -xzf ilias.tar.gz --strip-components=1 \
     && rm ilias.tar.gz
+
+COPY docker-ilias-entrypoint /usr/local/bin/
+COPY install-ilias /usr/local/bin/
+
+ENTRYPOINT ["docker-ilias-entrypoint"]
+CMD ["apache2-foreground"]
