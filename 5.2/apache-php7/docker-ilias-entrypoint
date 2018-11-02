@@ -188,26 +188,26 @@ if [[ "$1" == apache2* ]] || [ "$1" == php-fpm ]; then
                 passwd = '$(mkpass ${ILIAS_ROOT_PASSWORD})',
                 passwd_enc_type = 'md5'
             WHERE usr_id = 6"
+
+        echo "Setting skin/style"
+        ${mysql} -e "UPDATE usr_pref SET
+                value = '${ILIAS_DEFAULT_SKIN}'
+            WHERE keyword = 'skin'"
+        ${mysql} -e "UPDATE usr_pref SET
+                value = '${ILIAS_DEFAULT_STYLE}'
+            WHERE keyword = 'style'"
+
+        echo "======================================================="
+        echo "ILIAS installed successfully!"
+        echo "Log in using the following credentials:"
+        echo
+        echo "User:           root"
+        echo "Password:       ${ILIAS_ROOT_PASSWORD}"
+        echo "Setup Password: ${ILIAS_SETUP_PASSWORD}"
+        echo "======================================================="
     else
         echo "ILIAS already installed"
     fi
-
-    echo "Setting skin/style"
-    ${mysql} -e "UPDATE usr_pref SET
-            value = '${ILIAS_DEFAULT_SKIN}'
-        WHERE keyword = 'skin'"
-    ${mysql} -e "UPDATE usr_pref SET
-            value = '${ILIAS_DEFAULT_STYLE}'
-        WHERE keyword = 'style'"
-
-    echo "======================================================="
-    echo "ILIAS installed successfully!"
-    echo "Log in using the following credentials:"
-    echo
-    echo "User:           root"
-    echo "Password:       ${ILIAS_ROOT_PASSWORD}"
-    echo "Setup Password: ${ILIAS_SETUP_PASSWORD}"
-    echo "======================================================="
 fi
 
 exec "$@"
