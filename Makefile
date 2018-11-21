@@ -1,8 +1,10 @@
 IMAGE = sturai/ilias
 
-variants = $(sort $(wildcard */*/Dockerfile))
-variant  = $$(basename $$(dirname $1))
-branch   = $$(basename $$(dirname $$(dirname $1)))
+variants   = $(sort $(wildcard */*/Dockerfile))
+unreleased = $(wildcard *alpha*/*/Dockerfile) $(wildcard *beta*/*/Dockerfile)
+
+variant = $$(basename $$(dirname $1))
+branch  = $$(basename $$(dirname $$(dirname $1)))
 
 .ONESHELL:
 
@@ -22,7 +24,7 @@ $(variants):
 
 .PHONY: tag
 tag: $(variants)
-	latest=$(lastword $(variants))
+	latest=$(lastword $(filter-out $(unreleased),$(variants)))
 	variant=$(call variant,$$latest)
 	branch=$(call branch,$$latest)
 	docker tag $(IMAGE):$$branch-$$variant $(IMAGE):latest
