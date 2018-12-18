@@ -7,6 +7,8 @@ function mkpass () {
 }
 
 # Set defaults
+ILIAS_AUTO_SETUP="${ILIAS_AUTO_SETUP:=0}"
+
 ILIAS_CLIENT_NAME="${ILIAS_CLIENT_NAME:=default}"
 ILIAS_HOST_NAME="${ILIAS_HOST_NAME:=$(hostname)}"
 ILIAS_TIMEZONE="${ILIAS_TIMEZONE:=Europe/Berlin}"
@@ -122,92 +124,96 @@ upload_max_filesize = ${ILIAS_MAX_UPLOAD_SIZE}
 post_max_size = ${ILIAS_MAX_UPLOAD_SIZE}
 "
 
-if [ ! -d "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}" ]; then
-    echo "Preparing data directories"
-    # Create data directories
-    mkdir -p "${ILIAS_ILIASDATA_PATH}/${ILIAS_CLIENT_NAME}/files"
-    mkdir -p "${ILIAS_ILIASDATA_PATH}/${ILIAS_CLIENT_NAME}/forum"
-    mkdir -p "${ILIAS_ILIASDATA_PATH}/${ILIAS_CLIENT_NAME}/lm_data"
-    mkdir -p "${ILIAS_ILIASDATA_PATH}/${ILIAS_CLIENT_NAME}/mail"
+if [ "${ILIAS_AUTO_SETUP}" -eq "1" ]; then
+    if [ ! -d "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}" ]; then
+        echo "Preparing data directories"
+        # Create data directories
+        mkdir -p "${ILIAS_ILIASDATA_PATH}/${ILIAS_CLIENT_NAME}/files"
+        mkdir -p "${ILIAS_ILIASDATA_PATH}/${ILIAS_CLIENT_NAME}/forum"
+        mkdir -p "${ILIAS_ILIASDATA_PATH}/${ILIAS_CLIENT_NAME}/lm_data"
+        mkdir -p "${ILIAS_ILIASDATA_PATH}/${ILIAS_CLIENT_NAME}/mail"
 
-    mkdir -p "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/css"
-    mkdir -p "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/lm_data"
-    mkdir -p "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/mobs"
-    mkdir -p "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/usr_images"
+        mkdir -p "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/css"
+        mkdir -p "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/lm_data"
+        mkdir -p "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/mobs"
+        mkdir -p "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/usr_images"
 
-    # Fix permissions
-    chown -R www-data:root ${ILIAS_ILIASDATA_PATH} || true
-    chown -R www-data:root ${ILIAS_DATA_PATH} || true
-fi
-
-# Add ini files
-echo "${ILIAS_CLIENT_INI}" > "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/client.ini.php"
-chown www-data:root "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/client.ini.php"
-
-echo "${ILIAS_INI}" > "${ILIAS_WWW_PATH}/ilias.ini.php"
-echo "${PHP_INI}" > /usr/local/etc/php/conf.d/ilias.ini
-
-# Touch ilias log
-touch ${ILIAS_ILIASDATA_PATH}/ilias.log
-chown www-data:root ${ILIAS_ILIASDATA_PATH}/ilias.log
-
-if [[ "$1" == apache2* ]] || [ "$1" == php-fpm ]; then
-    mysql="mysql
-        --host=${ILIAS_DB_HOST}
-        --user=${ILIAS_DB_USER}
-        --password=${ILIAS_DB_PASSWORD}
-        ${ILIAS_DB_NAME}"
-
-    # Wait for database
-    tries=0
-    maxTries=10
-    until ${mysql} -e "SELECT VERSION();" &> /dev/null; do
-        tries=$((tries + 1))
-        if [ $tries -gt $maxTries ]; then
-            # give up
-            echo "Could not connect to database, aborting"
-            exit 1
-        fi
-        echo "Cannot connect to database, waiting"
-        sleep 3
-    done
-    echo "Database connection established"
-
-    if ! $(${mysql} -e "SELECT COUNT(*) FROM settings" &> /dev/null); then
-        # Import database
-        echo "Installing database"
-        ${mysql} < ${ILIAS_DB_DUMP}
-
-        # Run setup
-        echo "Running setup"
-        install-ilias ${ILIAS_CLIENT_NAME} > /dev/null
-
-        # Customize ilias
-        echo "Setting root password"
-        ${mysql} -e "UPDATE usr_data SET
-                passwd = '$(mkpass ${ILIAS_ROOT_PASSWORD})',
-                passwd_enc_type = 'md5'
-            WHERE usr_id = 6"
-
-        echo "Setting skin/style"
-        ${mysql} -e "UPDATE usr_pref SET
-                value = '${ILIAS_DEFAULT_SKIN}'
-            WHERE keyword = 'skin'"
-        ${mysql} -e "UPDATE usr_pref SET
-                value = '${ILIAS_DEFAULT_STYLE}'
-            WHERE keyword = 'style'"
-
-        echo "======================================================="
-        echo "ILIAS installed successfully!"
-        echo "Log in using the following credentials:"
-        echo
-        echo "User:           root"
-        echo "Password:       ${ILIAS_ROOT_PASSWORD}"
-        echo "Setup Password: ${ILIAS_SETUP_PASSWORD}"
-        echo "======================================================="
-    else
-        echo "ILIAS already installed"
+        # Fix permissions
+        chown -R www-data:root ${ILIAS_ILIASDATA_PATH} || true
+        chown -R www-data:root ${ILIAS_DATA_PATH} || true
     fi
+
+    # Add ini files
+    echo "${ILIAS_CLIENT_INI}" > "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/client.ini.php"
+    chown www-data:root "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/client.ini.php"
+
+    echo "${ILIAS_INI}" > "${ILIAS_WWW_PATH}/ilias.ini.php"
+    echo "${PHP_INI}" > /usr/local/etc/php/conf.d/ilias.ini
+
+    # Touch ilias log
+    touch ${ILIAS_ILIASDATA_PATH}/ilias.log
+    chown www-data:root ${ILIAS_ILIASDATA_PATH}/ilias.log
+
+    if [[ "$1" == apache2* ]] || [ "$1" == php-fpm ]; then
+        mysql="mysql
+            --host=${ILIAS_DB_HOST}
+            --user=${ILIAS_DB_USER}
+            --password=${ILIAS_DB_PASSWORD}
+            ${ILIAS_DB_NAME}"
+
+        # Wait for database
+        tries=0
+        maxTries=10
+        until ${mysql} -e "SELECT VERSION();" &> /dev/null; do
+            tries=$((tries + 1))
+            if [ $tries -gt $maxTries ]; then
+                # give up
+                echo "Could not connect to database, aborting"
+                exit 1
+            fi
+            echo "Cannot connect to database, waiting"
+            sleep 3
+        done
+        echo "Database connection established"
+
+        if ! $(${mysql} -e "SELECT COUNT(*) FROM settings" &> /dev/null); then
+            # Import database
+            echo "Installing database"
+            ${mysql} < ${ILIAS_DB_DUMP}
+
+            # Run setup
+            echo "Running setup"
+            install-ilias ${ILIAS_CLIENT_NAME} > /dev/null
+
+            # Customize ilias
+            echo "Setting root password"
+            ${mysql} -e "UPDATE usr_data SET
+                    passwd = '$(mkpass ${ILIAS_ROOT_PASSWORD})',
+                    passwd_enc_type = 'md5'
+                WHERE usr_id = 6"
+
+            echo "Setting skin/style"
+            ${mysql} -e "UPDATE usr_pref SET
+                    value = '${ILIAS_DEFAULT_SKIN}'
+                WHERE keyword = 'skin'"
+            ${mysql} -e "UPDATE usr_pref SET
+                    value = '${ILIAS_DEFAULT_STYLE}'
+                WHERE keyword = 'style'"
+
+            echo "======================================================="
+            echo "ILIAS installed successfully!"
+            echo "Log in using the following credentials:"
+            echo
+            echo "User:           root"
+            echo "Password:       ${ILIAS_ROOT_PASSWORD}"
+            echo "Setup Password: ${ILIAS_SETUP_PASSWORD}"
+            echo "======================================================="
+        else
+            echo "ILIAS already installed"
+        fi
+    fi
+else
+    echo "ILIAS setup skipped"
 fi
 
 exec "$@"
