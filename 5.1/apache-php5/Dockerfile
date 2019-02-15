@@ -4,7 +4,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     imagemagick \
     libav-tools \
-    libpng12-dev \
+    libpng-dev \
     libxslt-dev \
     mysql-client \
     pwgen \
