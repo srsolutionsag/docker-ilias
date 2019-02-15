@@ -15,7 +15,7 @@ $(variants):
 	variant=$(call variant,$@)
 	branch=$(call branch,$@)
 	version=$$(grep "ENV ILIAS_VERSION" $@ | awk -F "=" '{print $$2}')
-	docker build --rm \
+	docker build --rm --pull \
 		-t $(IMAGE):$$branch \
 		-t $(IMAGE):$$branch-$$variant \
 		-t $(IMAGE):$$version \
