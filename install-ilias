@@ -50,10 +50,9 @@ abstract class BasicInstaller implements Installer {
 
 
 	public function readIniFilesAndProvideClient() {
-		global $ilIliasIniFile, $DIC;
+		global $ilIliasIniFile;
 		$ilIliasIniFile = new \ilIniFile("./ilias.ini.php");
 		$ilIliasIniFile->read();
-		$DIC['ilIliasIniFile'] = $ilIliasIniFile;
 
 		// Init CLient-ini
 		$ini_file = "./" . ILIAS_WEB_DIR . "/" . $this->getClientName() . "/client.ini.php";
@@ -61,7 +60,6 @@ abstract class BasicInstaller implements Installer {
 		global $ilClientIniFile;
 		$ilClientIniFile = new \ilIniFile($ini_file);
 		$ilClientIniFile->read();
-		$DIC['ilClientIniFile'] = $ilClientIniFile;
 
 		// Read Client
 		global $ilClient;
@@ -217,6 +215,13 @@ class Installer52 extends BasicInstaller implements Installer {
 }
 
 class Installer53 extends Installer52 implements Installer {
+
+	public function readIniFilesAndProvideClient() {
+		parent::readIniFilesAndProvideClient();
+		global $DIC, $ilIliasIniFile, $ilClientIniFile;
+		$DIC['ilIliasIniFile'] = $ilIliasIniFile;
+		$DIC['ilClientIniFile'] = $ilClientIniFile;
+	}
 
 	public function provideGlobalLogger() {
 		global $DIC;
