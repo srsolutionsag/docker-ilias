@@ -16,11 +16,12 @@ $(variants):
 	branch=$(call branch,$@)
 	version=$$(grep "ENV ILIAS_VERSION" $@ | awk -F "=" '{print $$2}')
 	docker build --rm --pull \
+		-f $$branch/$$variant/Dockerfile \
 		-t $(IMAGE):$$branch \
 		-t $(IMAGE):$$branch-$$variant \
 		-t $(IMAGE):$$version \
 		-t $(IMAGE):$$version-$$variant \
-		$$branch/$$variant
+		.
 
 .PHONY: tag
 tag: $(variants)
