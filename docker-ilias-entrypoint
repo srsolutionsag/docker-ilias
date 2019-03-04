@@ -127,6 +127,9 @@ CRON="
 */10 * * * * www-data /usr/local/bin/php /var/www/html/cron/cron.php root ${ILIAS_ROOT_PASSWORD} ${ILIAS_CLIENT_NAME} 2>&1 > /dev/stdout
 "
 
+echo "${PHP_INI}" > /usr/local/etc/php/conf.d/ilias.ini
+echo "${CRON}" > /etc/cron.d/ilias
+
 if [ "${ILIAS_AUTO_SETUP}" -eq "1" ]; then
     if [ ! -d "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}" ]; then
         echo "Preparing data directories"
@@ -151,8 +154,6 @@ if [ "${ILIAS_AUTO_SETUP}" -eq "1" ]; then
     chown www-data:root "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/client.ini.php"
 
     echo "${ILIAS_INI}" > "${ILIAS_WWW_PATH}/ilias.ini.php"
-    echo "${PHP_INI}" > /usr/local/etc/php/conf.d/ilias.ini
-    echo "${CRON}" > /etc/cron.d/ilias
 
     # Touch ilias log
     touch ${ILIAS_ILIASDATA_PATH}/ilias.log
