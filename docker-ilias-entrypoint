@@ -123,6 +123,9 @@ PHP_INI="
 upload_max_filesize = ${ILIAS_MAX_UPLOAD_SIZE}
 post_max_size = ${ILIAS_MAX_UPLOAD_SIZE}
 "
+CRON="
+*/10 * * * * www-data /usr/local/bin/php /var/www/html/cron/cron.php root ${ILIAS_ROOT_PASSWORD} ${ILIAS_CLIENT_NAME} 2>&1 > /dev/stdout
+"
 
 if [ "${ILIAS_AUTO_SETUP}" -eq "1" ]; then
     if [ ! -d "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}" ]; then
@@ -149,6 +152,7 @@ if [ "${ILIAS_AUTO_SETUP}" -eq "1" ]; then
 
     echo "${ILIAS_INI}" > "${ILIAS_WWW_PATH}/ilias.ini.php"
     echo "${PHP_INI}" > /usr/local/etc/php/conf.d/ilias.ini
+    echo "${CRON}" > /etc/cron.d/ilias
 
     # Touch ilias log
     touch ${ILIAS_ILIASDATA_PATH}/ilias.log
