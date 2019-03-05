@@ -124,7 +124,7 @@ upload_max_filesize = ${ILIAS_MAX_UPLOAD_SIZE}
 post_max_size = ${ILIAS_MAX_UPLOAD_SIZE}
 "
 CRON="
-*/10 * * * * www-data /usr/local/bin/php /var/www/html/cron/cron.php root ${ILIAS_ROOT_PASSWORD} ${ILIAS_CLIENT_NAME} 2>&1 > /dev/stdout
+*/10 * * * * root su www-data -s /bin/sh -c \"/usr/local/bin/php /var/www/html/cron/cron.php root ${ILIAS_ROOT_PASSWORD} ${ILIAS_CLIENT_NAME}\" 1>/proc/1/fd/1 2>/proc/1/fd/2
 "
 
 echo "${PHP_INI}" > /usr/local/etc/php/conf.d/ilias.ini
