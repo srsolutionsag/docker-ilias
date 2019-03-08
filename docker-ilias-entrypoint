@@ -8,6 +8,7 @@ function mkpass () {
 
 # Set defaults
 ILIAS_AUTO_SETUP="${ILIAS_AUTO_SETUP:=0}"
+ILIAS_SKIP_UPDATE="${ILIAS_SKIP_UPDATE:=0}"
 
 ILIAS_CLIENT_NAME="${ILIAS_CLIENT_NAME:=default}"
 ILIAS_HOST_NAME="${ILIAS_HOST_NAME:=$(hostname)}"

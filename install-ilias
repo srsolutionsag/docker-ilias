@@ -284,6 +284,8 @@ class InstallerRunner {
 			$preparation
 		);
 
+		$skip_update = boolval(getenv('ILIAS_SKIP_UPDATE') ?: '0');
+
 		$this->installer->basicRequires();
 		$this->installer->versionSpecificRequires();
 		$this->installer->provideMinimalGlobals();
@@ -292,7 +294,9 @@ class InstallerRunner {
 		$this->installer->provideGlobals();
 		$this->installer->provideGlobalLogger();
 		$this->installer->prepareDBUpdate();
-		$this->installer->updateDatabase();
+		if (!$skip_update) {
+			$this->installer->updateDatabase();
+		}
 		$this->installer->installLanguages();
 		$this->installer->setConfiguration();
 		$this->installer->finish();
