@@ -1,4 +1,6 @@
-FROM php:7.0-apache
+ARG PHP_VERSION
+
+FROM php:${PHP_VERSION}
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     cron \
@@ -43,8 +45,8 @@ RUN mkdir ${ILIAS_DATA_PATH} \
     && chmod 775 ${ILIAS_DATA_PATH}
 VOLUME ${ILIAS_DATA_PATH}
 
-ENV ILIAS_VERSION=5.2.22
-ENV ILIAS_SHA1=c480e0617a87e2e6b4bbbcb94ff6046c030043bb
+ENV ILIAS_VERSION=5.4.0-beta.1
+ENV ILIAS_SHA1=3ce42290f589f6619d7ecef8debef1a8c0ca5db5
 
 RUN curl -o ilias.tar.gz -SL https://github.com/ILIAS-eLearning/ILIAS/archive/v${ILIAS_VERSION}.tar.gz \
     && echo "$ILIAS_SHA1 *ilias.tar.gz" | sha1sum -c - \
