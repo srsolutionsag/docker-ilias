@@ -121,6 +121,7 @@ activate_global_cache = 0
 global_cache_service_type = 0
 "
 PHP_INI="
+log_errors = On
 max_execution_time = 900
 max_input_time = 900
 max_input_vars = 10000
