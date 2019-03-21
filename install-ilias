@@ -344,7 +344,7 @@ class Installer54 extends Installer53 implements Installer {
 	public function provideGlobals() {
 		parent::provideGlobals();
 		global $DIC, $ilDB;
-		session_name("PHPSESSID");
+		$_COOKIE["SESSID"] = str_repeat('x', 32);
 		require_once('./setup/include/inc.setup_header.php');
 		$DIC['ilDB'] = $ilDB;
 		$DIC['ilObjDataCache'] = new \ilObjectDataCache();
