@@ -400,14 +400,6 @@ class InstallerPreparation {
 	public function getILIASVersion() {
 		return ILIAS_VERSION_NUMERIC;
 	}
-
-
-	/**
-	 *
-	 */
-	public function startSession() {
-		session_start();
-	}
 }
 
 /**
@@ -430,7 +422,6 @@ class InstallerRunner {
 		$preparation->setPathConstants();
 		$preparation->changeDirectory();
 		$preparation->readVersionFile();
-		$preparation->startSession();
 
 		$this->installer = (new InstallerFactory())->getInstallerForVersion($preparation);
 
