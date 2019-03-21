@@ -123,6 +123,7 @@ activate_global_cache = 0
 global_cache_service_type = 0
 "
 PHP_INI="
+error_reporting = E_ALL & ~E_NOTICE & ~E_WARNING & ~E_STRICT
 log_errors = On
 max_execution_time = 900
 max_input_time = 900
