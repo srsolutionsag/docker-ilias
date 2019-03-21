@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libav-tools \
     libpng-dev \
     libxslt-dev \
+    libzip-dev \
     mysql-client \
     pwgen \
     unzip \
