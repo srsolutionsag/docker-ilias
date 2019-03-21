@@ -135,6 +135,9 @@ abstract class BasicInstaller implements Installer {
 
 		$lng->setDbHandler($ilDB);
 		$lng->installLanguages(array('en'), array());
+
+		// Set default language
+		$ilClient->setDefaultLanguage('en');
 	}
 
 
