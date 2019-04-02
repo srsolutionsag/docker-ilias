@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ghostscript \
     imagemagick \
     libav-tools \
+    libldap-dev \
     libpng-dev \
     libxslt-dev \
     mysql-client \
@@ -18,6 +19,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN docker-php-ext-install \
     gd \
+    ldap \
     mysqli \
     pdo \
     pdo_mysql \
