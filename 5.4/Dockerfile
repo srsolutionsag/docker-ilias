@@ -18,7 +18,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     zip \
     && rm -rf /var/lib/apt/lists/*
 
-RUN docker-php-ext-install \
+RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ && \
+    docker-php-ext-install \
     gd \
     ldap \
     mysqli \
