@@ -57,7 +57,6 @@ abstract class BasicInstaller implements Installer {
 	public function basicRequires() {
 		require_once("./Services/Utilities/classes/class.ilUtil.php");
 		require_once("./setup/classes/class.ilClient.php");
-		require_once("./setup/classes/class.ilDBConnections.php");
 		require_once("./Services/Init/classes/class.ilIniFile.php");
 		require_once("./Services/Database/classes/class.ilDBUpdate.php");
 		require_once("./Services/AccessControl/classes/class.ilRbacAdmin.php");
@@ -205,7 +204,9 @@ abstract class BasicInstaller implements Installer {
 }
 
 /**
+ * Class Installer50
  *
+ * @package SRAG\ILIAS\Setup
  */
 class Installer50 extends BasicInstaller implements Installer {
 
@@ -215,6 +216,7 @@ class Installer50 extends BasicInstaller implements Installer {
 	public function versionSpecificRequires() {
 		require_once('./include/inc.get_pear.php');
 		require_once('./Services/Logging/classes/class.ilLog.php');
+		require_once("./setup/classes/class.ilDBConnections.php");
 	}
 
 
@@ -229,7 +231,9 @@ class Installer50 extends BasicInstaller implements Installer {
 }
 
 /**
+ * Class Installer51
  *
+ * @package SRAG\ILIAS\Setup
  */
 class Installer51 extends BasicInstaller implements Installer {
 
@@ -241,6 +245,7 @@ class Installer51 extends BasicInstaller implements Installer {
 		include_once './Services/Logging/classes/class.ilLoggingSetupSettings.php';
 		include_once './Services/Logging/classes/public/class.ilLoggerFactory.php';
 		include_once("./Services/Init/classes/class.ilErrorHandling.php");
+		require_once("./setup/classes/class.ilDBConnections.php");
 	}
 
 
@@ -257,7 +262,9 @@ class Installer51 extends BasicInstaller implements Installer {
 }
 
 /**
+ * Class Installer52
  *
+ * @package SRAG\ILIAS\Setup
  */
 class Installer52 extends BasicInstaller implements Installer {
 
@@ -269,6 +276,7 @@ class Installer52 extends BasicInstaller implements Installer {
 		require_once('./libs/composer/vendor/filp/whoops/src/Whoops/Handler/Handler.php');
 		include_once './Services/Logging/classes/class.ilLoggingSetupSettings.php';
 		include_once './Services/Logging/classes/public/class.ilLoggerFactory.php';
+		require_once("./setup/classes/class.ilDBConnections.php");
 	}
 
 
@@ -336,11 +344,6 @@ class Installer53 extends Installer52 implements Installer {
  */
 class Installer54 extends Installer53 implements Installer {
 
-	public function basicRequires() {
-		parent::basicRequires();
-	}
-
-
 	public function provideGlobals() {
 		parent::provideGlobals();
 		global $DIC, $ilDB;
@@ -360,6 +363,58 @@ class Installer54 extends Installer53 implements Installer {
 
 		// Finish Setup
 		$ilClient->setSetting('sty_media_cont_mig', 1);
+	}
+}
+
+/**
+ * Class Installer60
+ *
+ * @package SRAG\ILIAS\Setup
+ */
+class Installer60 extends Installer54 implements Installer {
+
+	/**
+	 * @inheritdoc
+	 */
+	public function versionSpecificRequires() {
+		require_once('./libs/composer/vendor/autoload.php');
+		require_once('./libs/composer/vendor/filp/whoops/src/Whoops/Handler/Handler.php');
+		include_once './Services/Logging/classes/class.ilLoggingSetupSettings.php';
+		include_once './Services/Logging/classes/public/class.ilLoggerFactory.php';
+	}
+
+
+	public function prepareDBUpdate() {
+		global $ilClient, $ilDB;
+		parent::prepareDBUpdate();
+		/**
+		 * @var ilClient $ilClient
+		 */
+
+		// Finish Setup
+		$ilClient->setSetting('sty_media_cont_mig', 1);
+	}
+
+
+	/**
+	 * @inheritdoc
+	 */
+	public function readIniFilesAndProvideClient() {
+		global $ilIliasIniFile, $ilClientIniFile, $ilClient, $DIC;
+		$ilIliasIniFile = new ilIniFile("./ilias.ini.php");
+		$ilIliasIniFile->read();
+		$DIC['ilIliasIniFile'] = $ilIliasIniFile;
+
+		// Init CLient-ini
+		$ini_file = "./" . ILIAS_WEB_DIR . "/" . $this->getClientName() . "/client.ini.php";
+
+		$ilClientIniFile = new ilIniFile($ini_file);
+		$ilClientIniFile->read();
+		$DIC['ilClientIniFile'] = $ilClientIniFile;
+
+		// Read Client
+		$ilClient = new ilClient($this->getClientName());
+		$ilClient->init();
 	}
 }
 
@@ -458,6 +513,9 @@ class InstallerFactory {
 
 		$installer = null;
 		switch (true) {
+			case (version_compare($ilias_version_string, '6.0.0', '>=')):
+				$installer = new Installer60();
+				break;
 			case (version_compare($ilias_version_string, '5.4.0', '>=')):
 				$installer = new Installer54();
 				break;
