@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpng-dev \
     libxslt-dev \
     libzip-dev \
-    mysql-client \
+    mariadb-client \
     pwgen \
     unzip \
     zip \

@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libldap-dev \
     libpng-dev \
     libxslt-dev \
-    mysql-client \
+    mariadb-client \
     pwgen \
     unzip \
     zip \
