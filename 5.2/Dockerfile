@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     ghostscript \
     imagemagick \
-    libav-tools \
+    ffmpeg \
     libldap-dev \
     libpng-dev \
     libxslt-dev \
