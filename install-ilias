@@ -374,6 +374,22 @@ class Installer54 extends Installer53 implements Installer {
  */
 class Installer60 extends Installer54 implements Installer {
 
+	public function provideGlobals() {
+		global $lng, $ilBench, $DIC, $ilDB;
+		$ilBench = new ilBenchmark();
+		$DIC['ilBench'] = $ilBench;
+		$lng = new \ilSetupLanguage('en');
+		$DIC['lng'] = $lng;
+
+
+		$_COOKIE["SESSID"] = str_repeat('x', 32);
+		require_once('./setup/include/inc.setup_header.php');
+		$DIC['ilDB'] = $ilDB;
+		$DIC['ilObjDataCache'] = new \ilObjectDataCache();
+		$DIC['ilLoggerFactory'] = ilLoggerFactory::getInstance();
+	}
+
+
 	/**
 	 * @inheritdoc
 	 */
