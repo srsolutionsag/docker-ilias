@@ -35,6 +35,12 @@ RUN a2enmod \
     headers \
     rewrite
 
+ENV OPENSSL_CONF=/etc/ssl/
+RUN curl -o phantomjs.tar.bz2 -SL https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 \
+    && tar -xjf phantomjs.tar.bz2 \
+    && mv phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs \
+    && rm -r phantomjs-2.1.1-linux-x86_64 phantomjs.tar.bz2
+
 ENV ILIAS_WWW_PATH=/var/www/html
 ENV ILIAS_DATA_PATH=/var/www/html/data
 ENV ILIAS_ILIASDATA_PATH=/var/iliasdata/ilias

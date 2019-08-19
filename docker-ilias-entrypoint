@@ -57,6 +57,7 @@ htmldoc =
 ffmpeg = /usr/bin/ffmpeg
 ghostscript = /usr/bin/gs
 latex = 
+phantomjs = /usr/local/bin/phantomjs
 vscantype = 
 scancommand = 
 cleancommand = 
