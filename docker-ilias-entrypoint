@@ -14,6 +14,7 @@ ILIAS_DEVMODE="${ILIAS_DEVMODE:=0}"
 ILIAS_CLIENT_NAME="${ILIAS_CLIENT_NAME:=default}"
 ILIAS_HOST_NAME="${ILIAS_HOST_NAME:=$(hostname)}"
 ILIAS_TIMEZONE="${ILIAS_TIMEZONE:=Europe/Berlin}"
+ILIAS_MEMORY_LIMIT="${ILIAS_MEMORY_LIMIT:=200M}"
 ILIAS_MAX_UPLOAD_SIZE="${ILIAS_MAX_UPLOAD_SIZE:=200M}"
 
 ILIAS_ROOT_PASSWORD="${ILIAS_ROOT_PASSWORD:=$(pwgen -1 16)}"
@@ -124,6 +125,7 @@ activate_global_cache = 0
 global_cache_service_type = 0
 "
 PHP_INI="
+memory_limit = ${ILIAS_MEMORY_LIMIT}
 error_reporting = E_ALL & ~E_NOTICE & ~E_WARNING & ~E_STRICT
 log_errors = On
 max_execution_time = 900
