@@ -63,8 +63,7 @@ RUN curl -o ilias.tar.gz -SL https://github.com/ILIAS-eLearning/ILIAS/archive/v$
     && tar -xzf ilias.tar.gz --strip-components=1 \
     && rm ilias.tar.gz
 
-COPY docker-ilias-entrypoint /usr/local/bin/
-COPY install-ilias /usr/local/bin/
+COPY docker-ilias-entrypoint-setup-cli /usr/local/bin/docker-ilias-entrypoint
 
 ENTRYPOINT ["docker-ilias-entrypoint"]
 CMD ["apache2-foreground"]
