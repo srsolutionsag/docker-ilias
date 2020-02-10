@@ -10,6 +10,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     libldap-dev \
     libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
     libxslt-dev \
     libzip-dev \
     mariadb-client \
