@@ -38,6 +38,9 @@ RUN a2enmod \
     headers \
     rewrite
 
+RUN curl -sS https://getcomposer.org/installer \
+        | php -- --install-dir=/usr/local/bin --filename=composer
+
 ENV OPENSSL_CONF=/etc/ssl/
 RUN curl -o phantomjs.tar.bz2 -SL https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 \
     && tar -xjf phantomjs.tar.bz2 \
@@ -65,6 +68,10 @@ RUN curl -o ilias.tar.gz -SL https://github.com/ILIAS-eLearning/ILIAS/archive/v$
     && echo "$ILIAS_SHA1 *ilias.tar.gz" | sha1sum -c - \
     && tar -xzf ilias.tar.gz --strip-components=1 \
     && rm ilias.tar.gz
+
+RUN echo "memory_limit=300M" > ${PHP_INI_DIR}/conf.d/composer.ini && \
+    composer install --no-dev -q -d libs/composer && \
+    rm ${PHP_INI_DIR}/conf.d/composer.ini
 
 COPY docker-ilias-entrypoint-setup-cli /usr/local/bin/docker-ilias-entrypoint
 
