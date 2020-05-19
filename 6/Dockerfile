@@ -69,9 +69,9 @@ RUN curl -o ilias.tar.gz -SL https://github.com/ILIAS-eLearning/ILIAS/archive/v$
     && tar -xzf ilias.tar.gz --strip-components=1 \
     && rm ilias.tar.gz
 
-RUN echo "memory_limit=300M" > ${PHP_INI_DIR}/conf.d/composer.ini && \
-    composer install --no-dev -q -d libs/composer && \
-    rm ${PHP_INI_DIR}/conf.d/composer.ini
+RUN echo "memory_limit=300M" > ${PHP_INI_DIR}/conf.d/composer.ini \
+    && composer install --no-dev -q \
+    && rm ${PHP_INI_DIR}/conf.d/composer.ini
 
 COPY docker-ilias-entrypoint-setup-cli /usr/local/bin/docker-ilias-entrypoint
 
