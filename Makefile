@@ -10,10 +10,10 @@ IMAGES = 5.2/php5.6-apache \
 	5.4/php7.1-apache \
 	5.4/php7.2-apache \
 	5.4/php7.3-apache \
-	6-beta/php7.2-apache \
-	6-beta/php7.3-apache
+	6/php7.2-apache \
+	6/php7.3-apache
 
-LATEST = 5.4/php7.3-apache
+LATEST = 6/php7.3-apache
 
 variant = $$(basename $1)
 branch  = $$(basename $$(dirname $1))
