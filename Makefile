@@ -12,7 +12,7 @@ IMAGES = \
 	6/php7.3-apache \
 	6/php7.4-apache
 
-LATEST = 6/php7.4-apache
+LATEST = 6/php7.3-apache
 
 variant = $$(basename $1)
 branch  = $$(basename $$(dirname $1))
