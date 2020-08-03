@@ -58,8 +58,8 @@ RUN mkdir ${ILIAS_DATA_PATH} \
     && chmod 775 ${ILIAS_DATA_PATH}
 VOLUME ${ILIAS_DATA_PATH}
 
-ENV ILIAS_VERSION=5.4.13
-ENV ILIAS_SHA1=c82040fec952b6bea488c603035a1682a747f90d
+ENV ILIAS_VERSION=5.4.14
+ENV ILIAS_SHA1=ad099518a8e460e32046ed01db30e5f805342c6b
 
 RUN curl -o ilias.tar.gz -SL https://github.com/ILIAS-eLearning/ILIAS/archive/v${ILIAS_VERSION}.tar.gz \
     && echo "$ILIAS_SHA1 *ilias.tar.gz" | sha1sum -c - \
