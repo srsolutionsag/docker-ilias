@@ -16,6 +16,7 @@ ILIAS_HOST_NAME="${ILIAS_HOST_NAME:=$(hostname)}"
 ILIAS_TIMEZONE="${ILIAS_TIMEZONE:=Europe/Berlin}"
 ILIAS_MEMORY_LIMIT="${ILIAS_MEMORY_LIMIT:=200M}"
 ILIAS_MAX_UPLOAD_SIZE="${ILIAS_MAX_UPLOAD_SIZE:=200M}"
+ILIAS_ERRORS_PATH="${ILIAS_ERRORS_PATH:=${ILIAS_ILIASDATA_PATH}/errors}"
 
 ILIAS_ROOT_PASSWORD="${ILIAS_ROOT_PASSWORD:=$(pwgen -1 16)}"
 ILIAS_SETUP_PASSWORD="${ILIAS_SETUP_PASSWORD:=$(pwgen -1 16)}"
@@ -69,7 +70,7 @@ path = php:/
 file = stdout
 enabled = 1
 level = WARNING
-error_path = ${ILIAS_ILIASDATA_PATH}/errors
+error_path = ${ILIAS_ERRORS_PATH}
 
 [https]
 auto_https_detect_enabled = 1
