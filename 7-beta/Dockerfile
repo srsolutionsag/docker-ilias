@@ -68,8 +68,8 @@ RUN mkdir ${ILIAS_DATA_PATH} \
     && chmod 775 ${ILIAS_DATA_PATH}
 VOLUME ${ILIAS_DATA_PATH}
 
-ENV ILIAS_VERSION=7.0_beta1
-ENV ILIAS_SHA1=b4dc04fc32a2f00d958c1fa0b5384425ff6ea78e
+ENV ILIAS_VERSION=7.0_beta2
+ENV ILIAS_SHA1=88b5d031fcfe680e9914a17354fa3a29ebfc1500
 
 # TODO: Revert to release archives once available
 RUN curl -o ilias.tar.gz -SL https://github.com/ILIAS-eLearning/ILIAS/archive/v${ILIAS_VERSION}.tar.gz \
