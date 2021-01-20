@@ -171,24 +171,6 @@ echo "${PHP_INI}" > /usr/local/etc/php/conf.d/ilias.ini
 echo "${CRON}" > /etc/cron.d/ilias
 
 if [ "${ILIAS_AUTO_SETUP}" -eq "1" ]; then
-    if [ ! -d "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}" ]; then
-        echo "Preparing data directories"
-        # Create data directories
-        mkdir -p "${ILIAS_ILIASDATA_PATH}/${ILIAS_CLIENT_NAME}/files"
-        mkdir -p "${ILIAS_ILIASDATA_PATH}/${ILIAS_CLIENT_NAME}/forum"
-        mkdir -p "${ILIAS_ILIASDATA_PATH}/${ILIAS_CLIENT_NAME}/lm_data"
-        mkdir -p "${ILIAS_ILIASDATA_PATH}/${ILIAS_CLIENT_NAME}/mail"
-
-        mkdir -p "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/css"
-        mkdir -p "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/lm_data"
-        mkdir -p "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/mobs"
-        mkdir -p "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/usr_images"
-
-        # Fix permissions
-        chown -R www-data:root ${ILIAS_ILIASDATA_PATH} || true
-        chown -R www-data:root ${ILIAS_DATA_PATH} || true
-    fi
-
     if [[ "$1" == apache2* ]] || [ "$1" == php-fpm ]; then
         mysql="mysql
             --host=${ILIAS_DB_HOST}
@@ -219,6 +201,10 @@ if [ "${ILIAS_AUTO_SETUP}" -eq "1" ]; then
             php setup/cli.php install -y /tmp/install.json
             rm /tmp/install.json
 
+            # Fix permissions
+            chown -R www-data:root ${ILIAS_ILIASDATA_PATH}
+            chown -R www-data:root ${ILIAS_DATA_PATH}
+
             # Customize ilias
             echo "Setting root password"
             ${mysql} -e "UPDATE usr_data SET
@@ -248,9 +234,10 @@ if [ "${ILIAS_AUTO_SETUP}" -eq "1" ]; then
     fi
 
     # Add ini files
-    echo "${ILIAS_CLIENT_INI}" > "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/client.ini.php"
-    chown www-data:root "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/client.ini.php"
-
+    if [ -d "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}" ]; then
+        echo "${ILIAS_CLIENT_INI}" > "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/client.ini.php"
+        chown www-data:root "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/client.ini.php"
+    fi
     echo "${ILIAS_INI}" > "${ILIAS_WWW_PATH}/ilias.ini.php"
 
     # Touch ilias log
