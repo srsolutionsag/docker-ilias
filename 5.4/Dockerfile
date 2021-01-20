@@ -64,7 +64,7 @@ ENV ILIAS_SHA1=51906794eddc2167bde23eb260a67b9199286f36
 RUN curl -o ilias.tar.gz -SL https://github.com/ILIAS-eLearning/ILIAS/archive/v${ILIAS_VERSION}.tar.gz \
     && echo "$ILIAS_SHA1 *ilias.tar.gz" | sha1sum -c - \
     && tar -xzf ilias.tar.gz --strip-components=1 \
-    && chown root:root * \
+    && chown -R root:root * \
     && rm ilias.tar.gz
 
 COPY docker-ilias-entrypoint /usr/local/bin/

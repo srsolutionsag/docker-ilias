@@ -75,7 +75,7 @@ ENV ILIAS_SHA1=88b5d031fcfe680e9914a17354fa3a29ebfc1500
 RUN curl -o ilias.tar.gz -SL https://github.com/ILIAS-eLearning/ILIAS/archive/v${ILIAS_VERSION}.tar.gz \
     && echo "$ILIAS_SHA1 *ilias.tar.gz" | sha1sum -c - \
     && tar -xzf ilias.tar.gz --strip-components=1 \
-    && chown root:root * \
+    && chown -R root:root * \
     && rm ilias.tar.gz
 
 RUN echo "memory_limit=300M" > ${PHP_INI_DIR}/conf.d/composer.ini \
