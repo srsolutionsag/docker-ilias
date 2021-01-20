@@ -239,6 +239,7 @@ if [ "${ILIAS_AUTO_SETUP}" -eq "1" ]; then
         chown www-data:root "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/client.ini.php"
     fi
     echo "${ILIAS_INI}" > "${ILIAS_WWW_PATH}/ilias.ini.php"
+    chown www-data:root "${ILIAS_WWW_PATH}/ilias.ini.php"
 
     # Touch ilias log
     touch ${ILIAS_ILIASDATA_PATH}/ilias.log
