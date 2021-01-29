@@ -18,7 +18,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     pwgen \
     unzip \
     zip \
-    && rm -rf /var/lib/apt/lists/*
+    node-less \
+    && rm -rf /var/lib/apt/* /var/cache/apt/*
 
 RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ && \
     case ${PHP_VERSION} in \
