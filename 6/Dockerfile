@@ -51,6 +51,9 @@ RUN curl -o phantomjs.tar.bz2 -SL https://bitbucket.org/ariya/phantomjs/download
     && mv phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs \
     && rm -r phantomjs-2.1.1-linux-x86_64 phantomjs.tar.bz2
 
+RUN curl -sS https://getcomposer.org/installer \
+    | php -- --version=1.10.17 --install-dir=/usr/local/bin --filename=composer
+
 ENV ILIAS_WWW_PATH=/var/www/html
 ENV ILIAS_DATA_PATH=/var/www/html/data
 ENV ILIAS_ILIASDATA_PATH=/var/iliasdata/ilias
