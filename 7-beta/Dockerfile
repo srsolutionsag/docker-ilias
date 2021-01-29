@@ -18,7 +18,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     pwgen \
     unzip \
     zip \
-    && rm -rf /var/lib/apt/lists/*
+    node-less \
+    && rm -rf /var/lib/apt/* /var/cache/apt/*
 
 RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ && \
     case ${PHP_VERSION} in \
@@ -53,8 +54,6 @@ RUN curl -o phantomjs.tar.bz2 -SL https://bitbucket.org/ariya/phantomjs/download
 
 RUN curl -sS https://getcomposer.org/installer \
     | php -- --version=1.10.17 --install-dir=/usr/local/bin --filename=composer
-
-RUN apt update ; apt install -qy node-less ; rm -rf /var/lib/apt/* /var/cache/apt/*
 
 ENV ILIAS_WWW_PATH=/var/www/html
 ENV ILIAS_DATA_PATH=/var/www/html/data
