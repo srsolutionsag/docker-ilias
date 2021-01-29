@@ -18,7 +18,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     pwgen \
     unzip \
     zip \
-    && rm -rf /var/lib/apt/lists/*
+    node-less \
+    && rm -rf /var/lib/apt/* /var/cache/apt/*
 
 RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ && \
     case ${PHP_VERSION} in \
@@ -68,8 +69,8 @@ RUN mkdir ${ILIAS_DATA_PATH} \
     && chmod 775 ${ILIAS_DATA_PATH}
 VOLUME ${ILIAS_DATA_PATH}
 
-ENV ILIAS_VERSION=7.0_beta2
-ENV ILIAS_SHA1=88b5d031fcfe680e9914a17354fa3a29ebfc1500
+ENV ILIAS_VERSION=7.0_beta3
+ENV ILIAS_SHA1=1bbfbe38647415da26c9bd5bfbf4b8c49c1103d5
 
 # TODO: Revert to release archives once available
 RUN curl -o ilias.tar.gz -SL https://github.com/ILIAS-eLearning/ILIAS/archive/v${ILIAS_VERSION}.tar.gz \
