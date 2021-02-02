@@ -198,7 +198,6 @@ if [ "${ILIAS_AUTO_SETUP}" -eq "1" ]; then
             echo "Running setup"
             echo "$INSTALL_JSON" > /tmp/install.json
             php setup/cli.php install -y /tmp/install.json
-            rm /tmp/install.json
 
             # Fix permissions
             chown -R www-data:root ${ILIAS_ILIASDATA_PATH}
