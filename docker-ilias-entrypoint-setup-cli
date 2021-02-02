@@ -196,7 +196,6 @@ if [ "${ILIAS_AUTO_SETUP}" -eq "1" ]; then
         if ! $(${mysql} -e "SELECT COUNT(*) FROM settings" &> /dev/null); then
             # Run setup
             echo "Running setup"
-            #install-ilias ${ILIAS_CLIENT_NAME} > /dev/null
             echo "$INSTALL_JSON" > /tmp/install.json
             php setup/cli.php install -y /tmp/install.json
             rm /tmp/install.json
