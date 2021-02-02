@@ -30,6 +30,8 @@ ILIAS_DB_DUMP="${ILIAS_DB_DUMP:=setup/sql/ilias3.sql}"
 ILIAS_DEFAULT_SKIN="${ILIAS_DEFAULT_SKIN:=default}"
 ILIAS_DEFAULT_STYLE="${ILIAS_DEFAULT_STYLE:=delos}"
 
+ILIAS_INSTALL_CONFIG_PATH="${ILIAS_INSTALL_CONFIG_PATH:=/tmp/install.json}"
+
 # Define Templates
 ILIAS_INI="
 ; <?php exit; ?>
@@ -196,8 +198,7 @@ if [ "${ILIAS_AUTO_SETUP}" -eq "1" ]; then
         if ! $(${mysql} -e "SELECT COUNT(*) FROM settings" &> /dev/null); then
             # Run setup
             echo "Running setup"
-            echo "$INSTALL_JSON" > /tmp/install.json
-            php setup/cli.php install -y /tmp/install.json
+            php setup/cli.php install -y ${ILIAS_INSTALL_CONFIG_PATH}
 
             # Fix permissions
             chown -R www-data:root ${ILIAS_ILIASDATA_PATH}
@@ -242,6 +243,9 @@ if [ "${ILIAS_AUTO_SETUP}" -eq "1" ]; then
     # Touch ilias log
     touch ${ILIAS_ILIASDATA_PATH}/ilias.log
     chown www-data:root ${ILIAS_ILIASDATA_PATH}/ilias.log
+
+    # Dump install config
+    echo "${INSTALL_JSON}" > "${ILIAS_INSTALL_CONFIG_PATH}"
 else
     echo "ILIAS setup skipped"
 fi
