@@ -157,19 +157,19 @@ if [ "${ILIAS_AUTO_SETUP}" -eq "1" ]; then
         mkdir -p "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/usr_images"
 
         # Fix permissions
-        chown -R www-data:root ${ILIAS_ILIASDATA_PATH} || true
-        chown -R www-data:root ${ILIAS_DATA_PATH} || true
+        chown -R www-data:www-data ${ILIAS_ILIASDATA_PATH} || true
+        chown -R www-data:www-data ${ILIAS_DATA_PATH} || true
     fi
 
     # Add ini files
     echo "${ILIAS_CLIENT_INI}" > "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/client.ini.php"
-    chown www-data:root "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/client.ini.php"
+    chown www-data:www-data "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/client.ini.php"
 
     echo "${ILIAS_INI}" > "${ILIAS_WWW_PATH}/ilias.ini.php"
 
     # Touch ilias log
     touch ${ILIAS_ILIASDATA_PATH}/ilias.log
-    chown www-data:root ${ILIAS_ILIASDATA_PATH}/ilias.log
+    chown www-data:www-data ${ILIAS_ILIASDATA_PATH}/ilias.log
 
     if [[ "$1" == apache2* ]] || [ "$1" == php-fpm ]; then
         mysql="mysql

@@ -204,8 +204,8 @@ if [ "${ILIAS_AUTO_SETUP}" -eq "1" ]; then
             php setup/cli.php install -y ${ILIAS_INSTALL_CONFIG_PATH}
 
             # Fix permissions
-            chown -R www-data:root ${ILIAS_ILIASDATA_PATH}
-            chown -R www-data:root ${ILIAS_DATA_PATH}
+            chown -R www-data:www-data ${ILIAS_ILIASDATA_PATH}
+            chown -R www-data:www-data ${ILIAS_DATA_PATH}
 
             # Customize ilias
             echo "Setting root password"
@@ -238,14 +238,14 @@ if [ "${ILIAS_AUTO_SETUP}" -eq "1" ]; then
     # Add ini files
     if [ -d "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}" ]; then
         echo "${ILIAS_CLIENT_INI}" > "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/client.ini.php"
-        chown www-data:root "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/client.ini.php"
+        chown www-data:www-data "${ILIAS_DATA_PATH}/${ILIAS_CLIENT_NAME}/client.ini.php"
     fi
     echo "${ILIAS_INI}" > "${ILIAS_WWW_PATH}/ilias.ini.php"
-    chown www-data:root "${ILIAS_WWW_PATH}/ilias.ini.php"
+    chown www-data:www-data "${ILIAS_WWW_PATH}/ilias.ini.php"
 
     # Touch ilias log
     touch ${ILIAS_ILIASDATA_PATH}/ilias.log
-    chown www-data:root ${ILIAS_ILIASDATA_PATH}/ilias.log
+    chown www-data:www-data ${ILIAS_ILIASDATA_PATH}/ilias.log
 else
     echo "ILIAS setup skipped"
 fi
