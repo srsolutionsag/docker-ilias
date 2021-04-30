@@ -69,19 +69,14 @@ RUN mkdir ${ILIAS_DATA_PATH} \
     && chmod 775 ${ILIAS_DATA_PATH}
 VOLUME ${ILIAS_DATA_PATH}
 
-ENV ILIAS_VERSION=7.0_beta4
-ENV ILIAS_SHA1=34a6e747c5a36947a7c2d66fb5f7d78592a62399
+ENV ILIAS_VERSION=7.0
+ENV ILIAS_SHA1=7e640793d7e3822c771a995e087bcf4c82a8fdfc
 
-# TODO: Revert to release archives once available
-RUN curl -o ilias.tar.gz -SL https://github.com/ILIAS-eLearning/ILIAS/archive/v${ILIAS_VERSION}.tar.gz \
+RUN curl -o ilias.tar.gz -SL https://github.com/ILIAS-eLearning/ILIAS/releases/download/v${ILIAS_VERSION}/ILIAS-${ILIAS_VERSION}.tar.gz \
     && echo "$ILIAS_SHA1 *ilias.tar.gz" | sha1sum -c - \
     && tar -xzf ilias.tar.gz --strip-components=1 \
     && chown -R root:root . && chown www-data:www-data . \
     && rm ilias.tar.gz
-
-RUN echo "memory_limit=300M" > ${PHP_INI_DIR}/conf.d/composer.ini \
-    && composer install --no-dev -q \
-    && rm ${PHP_INI_DIR}/conf.d/composer.ini
 
 COPY docker-ilias-entrypoint-setup-cli /usr/local/bin/docker-ilias-entrypoint
 
