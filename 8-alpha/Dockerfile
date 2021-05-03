@@ -19,6 +19,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         unzip \
         zip \
         node-less \
+        xfonts-75dpi \
+        xfonts-base \
     && rm -rf /var/lib/apt/* /var/cache/apt/*
 
 RUN docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
@@ -47,11 +49,10 @@ RUN a2enmod \
     headers \
     rewrite
 
-ENV OPENSSL_CONF=/etc/ssl/
-RUN curl -o phantomjs.tar.bz2 -SL https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 \
-    && tar -xjf phantomjs.tar.bz2 \
-    && mv phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs \
-    && rm -r phantomjs-2.1.1-linux-x86_64 phantomjs.tar.bz2
+ENV WKHTMLTOX_VERSION=0.12.6-1
+RUN curl -o wkhtmltox.deb -SL https://github.com/wkhtmltopdf/packaging/releases/download/${WKHTMLTOX_VERSION}/wkhtmltox_${WKHTMLTOX_VERSION}.buster_amd64.deb \
+    && dpkg -i wkhtmltox.deb \
+    && rm wkhtmltox.deb
 
 RUN curl -sS https://getcomposer.org/installer \
     | php -- --version=1.10.17 --install-dir=/usr/local/bin --filename=composer
