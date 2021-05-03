@@ -49,8 +49,7 @@ RUN a2enmod \
     headers \
     rewrite
 
-ENV WKHTMLTOX_VERSION=0.12.6-1
-RUN curl -o wkhtmltox.deb -SL https://github.com/wkhtmltopdf/packaging/releases/download/${WKHTMLTOX_VERSION}/wkhtmltox_${WKHTMLTOX_VERSION}.buster_amd64.deb \
+RUN curl -o wkhtmltox.deb -SL https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.buster_amd64.deb \
     && dpkg -i wkhtmltox.deb \
     && rm wkhtmltox.deb
 
