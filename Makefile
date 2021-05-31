@@ -1,9 +1,6 @@
 IMAGE_NAME ?= sturai/ilias
 
 IMAGES = \
-	5.3/php5.6-apache \
-	5.3/php7.0-apache \
-	5.3/php7.1-apache \
 	5.4/php7.0-apache \
 	5.4/php7.1-apache \
 	5.4/php7.2-apache \
