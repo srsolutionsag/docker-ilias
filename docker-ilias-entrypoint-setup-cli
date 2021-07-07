@@ -141,31 +141,31 @@ CRON="
 "
 INSTALL_JSON="
 {
-	\"common\" : {
-		\"client_id\" : \"${ILIAS_CLIENT_NAME}\",
-		\"master_password\" : \"${ILIAS_SETUP_PASSWORD}\"
-	},
-	\"database\" : {
-		\"host\" : \"${ILIAS_DB_HOST}\",
-		\"database\" : \"${ILIAS_DB_NAME}\",
-		\"user\" : \"${ILIAS_DB_USER}\",
-		\"password\" : \"${ILIAS_DB_PASSWORD}\",
+    \"common\" : {
+    \"client_id\" : \"${ILIAS_CLIENT_NAME}\",
+        \"master_password\" : \"${ILIAS_SETUP_PASSWORD}\"
+    },
+    \"database\" : {
+        \"host\" : \"${ILIAS_DB_HOST}\",
+        \"database\" : \"${ILIAS_DB_NAME}\",
+        \"user\" : \"${ILIAS_DB_USER}\",
+        \"password\" : \"${ILIAS_DB_PASSWORD}\",
         \"path_to_db_dump\": \"${ILIAS_DB_DUMP}\",
         \"create_database\": true
-	},
-	\"filesystem\" : {
-		\"data_dir\" : \"${ILIAS_ILIASDATA_PATH}\"
-	},
-	\"http\" : {
-		\"path\" : \"http://${ILIAS_HOST_NAME}\"
-	},
-	\"systemfolder\" : {
-		\"contact\" : {
-			\"firstname\" : \"Systemadministrator\",
-			\"lastname\" : \"ILIAS\",
-			\"email\" : \"noreply@example.com\"
-		}
-	}
+    },
+    \"filesystem\" : {
+        \"data_dir\" : \"${ILIAS_ILIASDATA_PATH}\"
+    },
+    \"http\" : {
+        \"path\" : \"http://${ILIAS_HOST_NAME}\"
+    },
+    \"systemfolder\" : {
+        \"contact\" : {
+            \"firstname\" : \"Systemadministrator\",
+            \"lastname\" : \"ILIAS\",
+            \"email\" : \"noreply@example.com\"
+        }
+    }
 }
 "
 
