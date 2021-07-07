@@ -19,7 +19,6 @@ variant = $$(basename $1)
 branch  = $$(basename $$(dirname $1))
 tag     = $$(echo $1 | sed 's|/|-|')
 version = $$(grep "ENV ILIAS_VERSION" $1/Dockerfile | awk -F "=" '{print $$2}')
-php     = $$(echo $1 | sed -E 's|.*php(.*)|\1|')
 
 .ONESHELL:
 
@@ -30,11 +29,10 @@ $(IMAGES):
 	@variant=$(call variant,$@)
 	@branch=$(call branch,$@)
 	@version=$(call version,$$branch)
-	@php=$(call php,$$variant)
 	@echo "Building $(IMAGE_NAME):$$branch-$$variant (version $$version)"
 	docker build --rm --pull \
 		-f $$branch/Dockerfile \
-		--build-arg PHP_VERSION=$$php \
+		--build-arg ILIAS_BASE_IMAGE=$$branch-$$variant \
 		-t $(IMAGE_NAME):$$branch-$$variant \
 		-t $(IMAGE_NAME):$$version-$$variant \
 		.
