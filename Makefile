@@ -26,7 +26,7 @@ $(IMAGES):
 	@branch=$(call branch,$@)
 	@version=$(call version,$$branch)
 	@echo "Building $(IMAGE_NAME):$$branch-$$variant (version $$version)"
-	docker build --rm --pull \
+	docker build --rm \
 		-f $$branch/Dockerfile \
 		--build-arg ILIAS_BASE_IMAGE=$$branch-$$variant \
 		-t $(IMAGE_NAME):$$branch-$$variant \
