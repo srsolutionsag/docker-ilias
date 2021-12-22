@@ -1,4 +1,4 @@
-IMAGE_NAME ?= sturai/ilias
+IMAGE_NAME ?= srsolutions/ilias
 
 IMAGES = \
 	5.4/php7.2-apache \
