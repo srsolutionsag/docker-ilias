@@ -12,6 +12,4 @@ RUN curl -o ilias.tar.gz -SL https://github.com/ILIAS-eLearning/ILIAS/archive/v$
     && chown -R root:root . && chown www-data:www-data . \
     && rm ilias.tar.gz
 
-RUN echo "memory_limit=300M" > ${PHP_INI_DIR}/conf.d/composer.ini \
-    && composer install --no-dev -q \
-    && rm ${PHP_INI_DIR}/conf.d/composer.ini
+RUN composer install --no-dev -q
