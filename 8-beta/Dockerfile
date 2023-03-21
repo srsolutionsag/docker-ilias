@@ -12,6 +12,6 @@ RUN curl -o ilias.tar.gz -SL https://github.com/ILIAS-eLearning/ILIAS/archive/v$
     && rm ilias.tar.gz
 
 RUN curl -sS https://getcomposer.org/installer \
-    | php -- --2 --install-dir=/usr/local/bin --filename=composer
-
-RUN composer install --no-dev -q
+    | php -- --2 --install-dir=/usr/local/bin --filename=composer \
+    && composer install --no-dev -q \
+    && rm /usr/local/bin/composer
