@@ -2,8 +2,8 @@ ARG ILIAS_BASE_IMAGE
 
 FROM srsolutions/ilias-base:${ILIAS_BASE_IMAGE}
 
-ENV ILIAS_VERSION=7.19
-ENV ILIAS_SHA1=eb6de45562842568b0e50c36caf191e0a15e951e
+ENV ILIAS_VERSION=7.20
+ENV ILIAS_SHA1=41bda3f47f5d5c63765a79066e6c04dc729fe6ad
 
 RUN curl -o ilias.tar.gz -SL https://github.com/ILIAS-eLearning/ILIAS/releases/download/v${ILIAS_VERSION}/ILIAS-${ILIAS_VERSION}.tar.gz \
     && echo "$ILIAS_SHA1 *ilias.tar.gz" | sha1sum -c - \
