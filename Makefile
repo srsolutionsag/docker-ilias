@@ -9,7 +9,9 @@ IMAGES = \
 	7/php7.3-apache \
 	7/php7.4-apache \
 	8/php7.4-apache \
-	8/php8.0-apache
+	8/php8.0-apache \
+	9-beta/php8.1-apache \
+	9-beta/php8.2-apache
 
 LATEST = 8/php8.0-apache
 
