@@ -1,9 +1,6 @@
 IMAGE_NAME ?= srsolutions/ilias
 
 IMAGES = \
-	6/php7.2-apache \
-	6/php7.3-apache \
-	6/php7.4-apache \
 	7/php7.3-apache \
 	7/php7.4-apache \
 	8/php7.4-apache \
