@@ -2,8 +2,8 @@ ARG ILIAS_BASE_IMAGE
 
 FROM srsolutions/ilias-base:${ILIAS_BASE_IMAGE}
 
-ENV ILIAS_VERSION=9.0_beta1
-ENV ILIAS_SHA1=561bc3a53369080b387d79942b0a7d8c4d135b37
+ENV ILIAS_VERSION=9.0_beta2
+ENV ILIAS_SHA1=5c0a6333a709368ac9d60452ed9efe1592172995
 
 # TODO: Revert to release archives once available
 RUN curl -o ilias.tar.gz -SL https://github.com/ILIAS-eLearning/ILIAS/archive/v${ILIAS_VERSION}.tar.gz \
