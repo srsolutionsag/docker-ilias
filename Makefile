@@ -19,15 +19,16 @@ tag     = $$(echo $1 | sed 's|/|-|')
 version = $$(grep "ENV ILIAS_VERSION" $1/Dockerfile | awk -F "=" '{print $$2}')
 
 .ONESHELL:
+.SILENT:
 
 all: $(IMAGES) tag
 
 .PHONY: $(IMAGES)
 $(IMAGES):
-	@variant=$(call variant,$@)
-	@branch=$(call branch,$@)
-	@version=$(call version,$$branch)
-	@echo "Building $(IMAGE_NAME):$$branch-$$variant (version $$version)"
+	variant=$(call variant,$@)
+	branch=$(call branch,$@)
+	version=$(call version,$$branch)
+	echo "Building $(IMAGE_NAME):$$branch-$$variant (version $$version)"
 	docker buildx build --platform $(PLATFORM) --pull \
 		-f $$branch/Dockerfile \
 		--build-arg ILIAS_BASE_IMAGE=$$branch-$$variant \
@@ -48,15 +49,15 @@ tag:
 				;;
 			esac
 	}
-	@for i in $(IMAGES); do \
+	for i in $(IMAGES); do \
 		variant=$(call variant,$$i);
 		branch=$(call branch,$$i);
 		tag=$(call tag,$$i);
 		echo "Tagging $(IMAGE_NAME):$$tag as $(IMAGE_NAME):$$branch"; \
 		tag $(IMAGE_NAME):$$tag $(IMAGE_NAME):$$branch; \
 	done
-	@latest=$(IMAGE_NAME):$(call tag,$(LATEST))
-	@echo "Tagging $$latest as latest"
+	latest=$(IMAGE_NAME):$(call tag,$(LATEST))
+	echo "Tagging $$latest as latest"
 	tag $$latest $(IMAGE_NAME):latest
 
 local: PLATFORM=local
@@ -66,7 +67,7 @@ local: all
 
 .PHONY: pull
 pull:
-	@for i in $(IMAGES); do \
+	for i in $(IMAGES); do \
 		variant=$(call variant,$$i);
 		branch=$(call branch,$$i);
 		tag=$(call tag,$$i);
@@ -78,5 +79,5 @@ pull:
 		echo "Pulling $(IMAGE_NAME):$$version-$$variant"; \
 		docker pull $(IMAGE_NAME):$$version-$$variant; \
 	done
-	@echo "Pulling $(IMAGE_NAME):latest"
+	echo "Pulling $(IMAGE_NAME):latest"
 	docker pull $(IMAGE_NAME):latest
