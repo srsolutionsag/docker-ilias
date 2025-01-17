@@ -2,8 +2,8 @@ IMAGE_NAME ?= srsolutions/ilias
 
 PLATFORM ?= linux/amd64,linux/arm64
 OUTPUT ?= type=image,push=true
-CACHE_FROM ?= type=local,src=.cache
-CACHE_TO ?= type=local,dest=.cache
+CACHE_FROM ?= type=registry,ref=registry.sr.solutions/intern/docker-ilias:build-cache
+CACHE_TO ?= type=registry,ref=registry.sr.solutions/intern/docker-ilias:build-cache
 
 IMAGES = \
 	7/php7.3-apache \
