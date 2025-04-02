@@ -12,8 +12,8 @@ RUN case ${TARGETARCH} in amd64) NODE_ARCH=x64 ;; arm64) NODE_ARCH=arm64 ;; *) e
     && ln -s /opt/node/bin/node /usr/local/bin/node \
     && ln -s /opt/node/bin/npm /usr/local/bin/npm
 
-ENV ILIAS_VERSION=10.0_beta1
-ENV ILIAS_MD5=d02321bf73e434f930e9a9c302a7cf92
+ENV ILIAS_VERSION=10.0_beta3
+ENV ILIAS_MD5=964b8ba83765dd3cd945d9d8598c21a3
 
 # TODO: Revert to release archives once available
 RUN curl -o ilias.tar.gz -SL https://github.com/ILIAS-eLearning/ILIAS/archive/v${ILIAS_VERSION}.tar.gz \
