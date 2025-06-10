@@ -31,13 +31,14 @@ $(IMAGES):
 	branch=$(call branch,$@)
 	version=$(call version,$$branch)
 	echo "Building $(IMAGE_NAME):$$branch-$$variant (version $$version)"
-	docker buildx build --platform $(PLATFORM) --pull \
-		-f $$branch/Dockerfile \
+	docker buildx build \
+		--pull \
+		--platform $(PLATFORM) \
 		--build-arg ILIAS_BASE_IMAGE=$$branch-$$variant \
 		-t $(IMAGE_NAME):$$branch-$$variant \
 		-t $(IMAGE_NAME):$$version-$$variant \
 		--output $(OUTPUT) \
-		.
+		$$branch
 
 .PHONY: tag
 tag:
