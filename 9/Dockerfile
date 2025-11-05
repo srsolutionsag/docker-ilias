@@ -2,8 +2,8 @@ ARG ILIAS_BASE_IMAGE
 
 FROM srsolutions/ilias-base:${ILIAS_BASE_IMAGE}
 
-ENV ILIAS_VERSION=9.14
-ENV ILIAS_MD5=44adb54621a4532ac85fbbe940bef225
+ENV ILIAS_VERSION=9.15
+ENV ILIAS_MD5=fa15184f73a1b5018f8ab570166b64d1
 
 RUN curl -o ilias.tar.gz -SL https://github.com/ILIAS-eLearning/ILIAS/releases/download/v${ILIAS_VERSION}/ILIAS-${ILIAS_VERSION}.tar.gz \
     && echo "$ILIAS_MD5 *ilias.tar.gz" | md5sum -c - \
