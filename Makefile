@@ -4,8 +4,6 @@ PLATFORM ?= linux/amd64,linux/arm64
 OUTPUT ?= type=image,push=true
 
 IMAGES = \
-	8/php7.4-apache \
-	8/php8.0-apache \
 	9/php8.1-apache \
 	9/php8.2-apache \
 	10/php8.2-apache \
